@@ -1,0 +1,785 @@
+swagger: '2.0'
+info:
+  title: Payment Initiation API Specification
+  description: >-
+    Swagger for Payment Initiation API Specification, This is heavily derived
+    from the Open Banking UK API - see www.openbanking.org.uk for details.
+  termsOfService: 'https://www.paymentsnz.co.nz/contact-us'
+  contact:
+    name: Service Desk
+    email: connect@paymentsnz.co.nz
+  license:
+    name: Licence
+    url: 'http://www.paymentsnz.co.nz/licence'
+  version: v0.0.5
+basePath: /open-banking/v1
+schemes:
+  - https
+produces:
+  - application/json; charset=utf-8
+paths:
+  /payments:
+    post:
+      tags:
+        - Payments
+      summary: Create a single immediate payment
+      description: Create a single immediate payment
+      operationId: CreateSingleImmediatePayment
+      consumes:
+        - application/json; charset=utf-8
+      produces:
+        - application/json; charset=utf-8
+      parameters:
+        - &ref_12
+          name: x-idempotency-key
+          in: header
+          description: >-
+            Every request will be processed only once per x-idempotency-key. 
+            The Idempotency Key will be valid for 24 hours.
+          required: true
+          type: string
+          pattern: ^(?!\s)(.*)(\S)$
+          maxLength: 40
+        - &ref_0
+          in: header
+          name: x-fapi-financial-id
+          type: string
+          required: false
+          description: >-
+            The unique id of the ASPSP to which the request is issued. The
+            unique id will be issued by OB.
+        - &ref_1
+          in: header
+          name: x-fapi-customer-last-logged-time
+          type: string
+          required: false
+          description: >-
+            The time when the PSU last logged in with the TPP. 
+
+            All dates in the HTTP headers are represented as RFC 7231 Full
+            Dates. An example is below: 
+
+            Sun, 10 Sep 2017 19:43:31 UTC
+          pattern: >-
+            ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}
+            (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}
+            \d{2}:\d{2}:\d{2} (GMT|UTC)$
+        - &ref_2
+          in: header
+          name: x-fapi-customer-ip-address
+          type: string
+          required: false
+          description: The PSU's IP address if the PSU is currently logged in with the TPP.
+        - &ref_3
+          in: header
+          name: x-fapi-interaction-id
+          type: string
+          required: false
+          description: An RFC4122 UID used as a correlation id.
+        - &ref_4
+          in: header
+          name: Authorization
+          type: string
+          required: true
+          description: 'An Authorisation Token as per https://tools.ietf.org/html/rfc6750'
+        - &ref_13
+          in: header
+          name: x-jws-signature
+          type: string
+          required: false
+          description: >-
+            Header containing a detached JWS signature of the body of the
+            payload.
+        - name: body
+          in: body
+          description: Setup a single immediate payment
+          required: true
+          schema:
+            title: Payment setup POST request
+            description: Allows setup of a payment
+            type: object
+            properties:
+              Data:
+                description: ''
+                title: PaymentSetup
+                type: object
+                properties:
+                  Initiation:
+                    $ref: '#/definitions/PaymentInitiation'
+                required:
+                  - Initiation
+                additionalProperties: false
+              Risk:
+                $ref: '#/definitions/Risk'
+            required:
+              - Data
+              - Risk
+            additionalProperties: false
+      responses:
+        '201':
+          description: Payment setup resource successfully created
+          schema:
+            title: Payment setup POST response
+            type: object
+            properties:
+              Data:
+                $ref: '#/definitions/PaymentResponse'
+              Risk:
+                $ref: '#/definitions/Risk'
+              Links:
+                $ref: '#/definitions/Links'
+              Meta:
+                $ref: '#/definitions/Meta'
+            required:
+              - Data
+              - Risk
+              - Links
+              - Meta
+            additionalProperties: false
+          headers:
+            x-jws-signature:
+              type: string
+              description: >-
+                Header containing a detached JWS signature of the body of the
+                payload.
+            x-fapi-interaction-id:
+              type: string
+              description: An RFC4122 UID used as a correlation id.
+        '400': &ref_5
+          description: Bad Request
+        '401': &ref_6
+          description: Unauthorized
+        '403': &ref_7
+          description: Forbidden
+        '405': &ref_8
+          description: Method Not Allowed
+        '406': &ref_9
+          description: Not Acceptable
+        '429': &ref_10
+          description: Too Many Requests
+          headers:
+            Retry-After:
+              description: Number in seconds to wait
+              type: integer
+        '500': &ref_11
+          description: Internal Server Error
+      security:
+        - TPPOAuth2Security:
+            - tpp_client_credential
+  '/payments/{PaymentId}':
+    get:
+      tags:
+        - Payments
+      summary: Get a single immediate payment
+      description: Get a single immediate payment
+      operationId: GetSingleImmediatePayment
+      produces:
+        - application/json; charset=utf-8
+      parameters:
+        - name: PaymentId
+          in: path
+          description: >-
+            Unique identification as assigned by the ASPSP to uniquely identify
+            the payment setup resource.
+          required: true
+          type: string
+        - *ref_0
+        - *ref_1
+        - *ref_2
+        - *ref_3
+        - *ref_4
+      responses:
+        '200':
+          description: Payment resource successfully retrieved
+          schema:
+            title: Payment setup GET response
+            type: object
+            properties:
+              Data:
+                $ref: '#/definitions/PaymentResponse'
+              Risk:
+                $ref: '#/definitions/Risk'
+              Links:
+                $ref: '#/definitions/Links'
+              Meta:
+                $ref: '#/definitions/Meta'
+            required:
+              - Data
+              - Risk
+              - Links
+              - Meta
+            additionalProperties: false
+          headers:
+            x-jws-signature:
+              type: string
+              description: >-
+                Header containing a detached JWS signature of the body of the
+                payload.
+            x-fapi-interaction-id:
+              type: string
+              description: An RFC4122 UID used as a correlation id.
+        '400': *ref_5
+        '401': *ref_6
+        '403': *ref_7
+        '405': *ref_8
+        '406': *ref_9
+        '429': *ref_10
+        '500': *ref_11
+      security:
+        - PSUOAuth2Security:
+            - payments
+        - TPPOAuth2Security:
+            - tpp_client_credential
+  /payment-submissions:
+    post:
+      tags:
+        - Payments
+      summary: Create a payment submission
+      description: Submit a previously setup payment
+      operationId: CreatePaymentSubmission
+      consumes:
+        - application/json; charset=utf-8
+      produces:
+        - application/json; charset=utf-8
+      parameters:
+        - *ref_12
+        - *ref_0
+        - *ref_1
+        - *ref_2
+        - *ref_3
+        - *ref_4
+        - *ref_13
+        - name: body
+          in: body
+          description: Setup a single immediate payment
+          required: true
+          schema:
+            title: Payment Submission POST request
+            description: Allows Submission of a payment
+            type: object
+            properties:
+              Data:
+                description: ''
+                title: PaymentSubmission
+                type: object
+                properties:
+                  PaymentId:
+                    description: >-
+                      OB: Unique identification as assigned by the ASPSP to
+                      uniquely identify the payment setup resource.
+                    type: string
+                    minLength: 1
+                    maxLength: 128
+                  Initiation:
+                    $ref: '#/definitions/PaymentInitiation'
+                required:
+                  - PaymentId
+                  - Initiation
+                additionalProperties: false
+              Risk:
+                $ref: '#/definitions/Risk'
+            required:
+              - Data
+              - Risk
+            additionalProperties: false
+      responses:
+        '201':
+          description: Payment submit resource successfully created
+          schema:
+            title: Payment Submit POST 201 Response
+            type: object
+            properties:
+              Data:
+                $ref: '#/definitions/PaymentSubmissionResponse'
+              Links:
+                $ref: '#/definitions/Links'
+              Meta:
+                $ref: '#/definitions/Meta'
+            required:
+              - Data
+              - Links
+              - Meta
+            additionalProperties: false
+          headers:
+            x-jws-signature:
+              type: string
+              description: >-
+                Header containing a detached JWS signature of the body of the
+                payload.
+            x-fapi-interaction-id:
+              type: string
+              description: An RFC4122 UID used as a correlation id.
+        '400': *ref_5
+        '401': *ref_6
+        '403': *ref_7
+        '405': *ref_8
+        '406': *ref_9
+        '429': *ref_10
+        '500': *ref_11
+      security:
+        - PSUOAuth2Security:
+            - payments
+  '/payment-submissions/{PaymentSubmissionId}':
+    get:
+      tags:
+        - Payments
+      summary: Get a payment submission
+      description: Get payment submission
+      operationId: GetPaymentSubmission
+      produces:
+        - application/json; charset=utf-8
+      parameters:
+        - name: PaymentSubmissionId
+          in: path
+          description: >-
+            Unique identification as assigned by the ASPSP to uniquely identify
+            the payment submission resource.
+          required: true
+          type: string
+        - *ref_0
+        - *ref_1
+        - *ref_2
+        - *ref_3
+        - *ref_4
+      responses:
+        '200':
+          description: Payment resource successfully retrieved
+          schema:
+            title: Payment Submit GET Response
+            type: object
+            properties:
+              Data:
+                $ref: '#/definitions/PaymentSubmissionResponse'
+              Links:
+                $ref: '#/definitions/Links'
+              Meta:
+                $ref: '#/definitions/Meta'
+            required:
+              - Data
+              - Links
+              - Meta
+            additionalProperties: false
+          headers:
+            x-jws-signature:
+              type: string
+              description: >-
+                Header containing a detached JWS signature of the body of the
+                payload.
+            x-fapi-interaction-id:
+              type: string
+              description: An RFC4122 UID used as a correlation id.
+        '400': *ref_5
+        '401': *ref_6
+        '403': *ref_7
+        '405': *ref_8
+        '406': *ref_9
+        '429': *ref_10
+        '500': *ref_11
+      security:
+        - PSUOAuth2Security:
+            - payments
+        - TPPOAuth2Security:
+            - tpp_client_credential
+definitions:
+  Meta:
+    type: object
+    description: Meta Data Relevant to the payload
+    properties:
+      TotalPages:
+        type: integer
+        format: int32
+    additionalProperties: false
+  Links:
+    type: object
+    description: Links to assist API navigation
+    properties:
+      Self:
+        type: string
+        format: uri
+      First:
+        type: string
+        format: uri
+      Prev:
+        type: string
+        format: uri
+      Next:
+        type: string
+        format: uri
+      Last:
+        type: string
+        format: uri
+    required:
+      - Self
+  Risk:
+    type: object
+    description: Placeholder to maintain structure similar to upstream
+    additionalProperties: false
+  BECSRemittance:
+    description: >-
+      Remittance information for use with BECS Electronic Credit payment scheme.
+      The Particulars, Code and Reference fields are currently constrained to
+      [insert].  The design choice has been made not to constrain through schema
+      restrictions, to allow for future changes that remove the constraint. 
+      Note that not all banks will accept all valid characters, in which case a
+      descriptive 400 Bad Request will be returned. Constraining to a-z, A-Z, - 
+      (dash) and 0-9 is advised. One example is abc-XYZ-123
+    properties:
+      CreditorName:
+        type: string
+        maxLength: 20
+      CreditorReference:
+        type: object
+        properties:
+          Particulars:
+            type: string
+            maxLength: 12
+          Code:
+            type: string
+            maxLength: 12
+          Reference:
+            type: string
+            maxLength: 12
+      DebtorName:
+        type: string
+        maxLength: 20
+      DebtorReference:
+        type: object
+        properties:
+          Particulars:
+            type: string
+            maxLength: 12
+          Code:
+            type: string
+            maxLength: 12
+          Reference:
+            type: string
+            maxLength: 12
+    required:
+      - CreditorName
+    additionalProperties: false
+  PaymentSubmissionResponse:
+    description: Response that reflects the payment processing status
+    properties:
+      PaymentSubmissionId:
+        description: >-
+          OB: Unique identification as assigned by the ASPSP to uniquely
+          identify the payment submission resource.
+        type: string
+        minLength: 1
+        maxLength: 40
+      PaymentId:
+        description: >-
+          OB: Unique identification as assigned by the ASPSP to uniquely
+          identify the payment setup resource.
+        type: string
+        minLength: 1
+        maxLength: 128
+      Status:
+        description: Specifies the status of the payment resource.
+        title: PaymentSubmissionStatusCode
+        type: string
+        enum:
+          - AcceptedSettlementCompleted
+          - AcceptedSettlementInProcess
+          - Pending
+          - Rejected
+      CreationDateTime:
+        description: >-
+          Date and time at which the resource was created. 
+
+          All dates in the JSON payloads are represented in ISO 8601 date-time
+          format. 
+
+          All date-time fields in responses must include the timezone. An
+          example is below:
+
+          2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+    required:
+      - PaymentSubmissionId
+      - PaymentId
+      - CreationDateTime
+    additionalProperties: false
+  PaymentResponse:
+    description: Response that reflects the status of payment setup
+    properties:
+      PaymentId:
+        description: >-
+          OB: Unique identification as assigned by the ASPSP to uniquely
+          identify the payment setup resource.
+        type: string
+        minLength: 1
+        maxLength: 128
+      Status:
+        description: Specifies the status of the payment resource.
+        title: PaymentStatusCode
+        type: string
+        enum:
+          - AcceptedCustomerProfile
+          - AcceptedTechnicalValidation
+          - Pending
+          - Rejected
+      CreationDateTime:
+        description: >-
+          Date and time at which the resource was created.  All dates in the
+          JSON payloads are represented in ISO 8601 date-time format.  All
+          date-time fields in responses must include the timezone. An example is
+          below:
+            2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+      Initiation:
+        $ref: '#/definitions/PaymentInitiation'
+    required:
+      - PaymentId
+      - CreationDateTime
+      - Initiation
+    additionalProperties: false
+  PaymentInitiation:
+    description: ''
+    type: object
+    properties:
+      InstructionIdentification:
+        description: >-
+          Unique identification as assigned by an instructing party for an
+          instructed party to unambiguously identify the instruction. Usage:
+          the  instruction identification is a point to point reference that can
+          be used between the instructing party and the instructed party to
+          refer to the individual instruction. It can be included in several
+          messages related to the instruction.  OBNZ: Updated to allow 36
+          characters to allow for v4 UUID
+        type: string
+        minLength: 1
+        maxLength: 36
+      EndToEndIdentification:
+        description: >-
+          Unique identification assigned by the initiating party to
+          unambiguously identify the transaction. This identification is passed
+          on, unchanged, throughout the entire end-to-end chain. Usage: The
+          end-to-end identification can be used for reconciliation or to link
+          tasks relating to the transaction. It can be included in several
+          messages related to the transaction. OB: The Faster Payments Scheme
+          can only access 31 characters for the EndToEndIdentification field.
+          OBNZ: Updated to 36 characters to allow v4 UUID
+        type: string
+        minLength: 1
+        maxLength: 36
+      InstructedAmount:
+        description: >-
+          Amount of money to be moved between the debtor and creditor, before
+          deduction of charges, expressed in the currency as ordered by the
+          initiating party. Usage: This amount has to be transported unchanged
+          through the transaction chain.
+        type: object
+        properties:
+          Amount:
+            type: string
+            pattern: '^\d{1,13}\.\d{1,5}$'
+          Currency:
+            description: >-
+              A code allocated to a currency by a Maintenance Agency under an
+              international identification scheme, as described in the latest
+              edition of the international standard ISO 4217 - Codes for the
+              representation of currencies and funds.
+            type: string
+            pattern: '^[A-Z]{3,3}$'
+        required:
+          - Amount
+          - Currency
+        additionalProperties: false
+      DebtorAgent:
+        description: Financial institution servicing an account for the debtor.
+        title: DebtorAgent
+        type: object
+        properties:
+          SchemeName:
+            description: >-
+              Name of the identification scheme, in a coded form as published in
+              an external list. 
+            title: SchemeName
+            type: string
+            enum:
+              - BICFI
+          Identification:
+            description: >-
+              Unique and unambiguous identification of an organisation. ISO20022
+              defines this:
+              https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YWZBNtp-Ed-ak6NoX_4Aeg_-1295138508
+            type: string
+            minLength: 1
+            maxLength: 35
+        required:
+          - SchemeName
+          - Identification
+        additionalProperties: false
+      DebtorAccount:
+        description: >-
+          Unambiguous identification of the account of the debtor to which a
+          debit entry will be made as a result of the transaction.
+        title: DebtorAccount
+        type: object
+        properties:
+          SchemeName:
+            description: >-
+              Name of the identification scheme, in a coded form as published in
+              an external list.
+            title: SchemeName
+            type: string
+            enum:
+              - IBAN
+              - SortCodeAccountNumber
+              - BECS Electronic Credit
+            default: BECS Electronic Credit
+          Identification:
+            description: >-
+              Identification assigned by an institution to identify an account.
+              This identification is known by the account owner.
+            type: string
+            minLength: 1
+            maxLength: 34
+          Name:
+            description: >-
+              Name of the account, as assigned by the account servicing
+              institution, in agreement with the account owner in order to
+              provide an additional means of identification of the account.
+              Usage: The account name is different from the account owner name.
+              The account name is used in certain user communities to provide a
+              means of identifying the account, in addition to the account
+              owner's identity and the account number.
+            type: string
+            minLength: 1
+            maxLength: 70
+          SecondaryIdentification:
+            description: >-
+              Identification assigned by an institution to identify an account.
+              This identification is known by the account owner.
+            type: string
+            minLength: 1
+            maxLength: 34
+        required:
+          - SchemeName
+          - Identification
+        additionalProperties: false
+      CreditorAgent:
+        description: Financial institution servicing an account for the creditor.
+        title: CreditorAgent
+        type: object
+        properties:
+          SchemeName:
+            description: >-
+              Name of the identification scheme, in a coded form as published in
+              an external list.
+            title: SchemeName
+            type: string
+            enum:
+              - BICFI
+          Identification:
+            description: >-
+              Unique and unambiguous identification of an organisation. ISO20022
+              defines this:
+              https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YWZBNtp-Ed-ak6NoX_4Aeg_-1295138508
+            type: string
+            minLength: 1
+            maxLength: 35
+        required:
+          - SchemeName
+          - Identification
+        additionalProperties: false
+      CreditorAccount:
+        description: >-
+          Unambiguous identification of the account of the creditor to which a
+          credit entry will be posted as a result of the payment transaction.
+        title: CreditorAccount
+        type: object
+        properties:
+          SchemeName:
+            description: >-
+              Name of the identification scheme, in a coded form as published in
+              an external list.
+            title: SchemeName
+            type: string
+            enum:
+              - IBAN
+              - SortCodeAccountNumber
+              - BECS Electronic Credit
+            default: BECS Electronic Credit
+          Identification:
+            description: >-
+              Identification assigned by an institution to identify an account.
+              This identification is known by the account owner.
+            type: string
+            minLength: 1
+            maxLength: 34
+          Name:
+            description: >-
+              Name of the account, as assigned by the account servicing
+              institution, in agreement with the account owner in order to
+              provide an additional means of identification of the account.
+              Usage: The account name is different from the account owner name.
+              The account name is used in certain user communities to provide a
+              means of identifying the account, in addition to the account
+              owner's identity and the account number. ASPSPs may carry out name
+              validation for Confirmation of Payee, but it is not mandatory.
+            type: string
+            minLength: 1
+            maxLength: 70
+          SecondaryIdentification:
+            description: >-
+              Identification assigned by an institution to identify an account.
+              This identification is known by the account owner.
+            type: string
+            minLength: 1
+            maxLength: 34
+        required:
+          - SchemeName
+          - Identification
+          - Name
+        additionalProperties: false
+      RemittanceInformation:
+        description: >-
+          Information supplied to enable the matching of an entry with the items
+          that the transfer is intended to settle, such as commercial invoices
+          in an accounts' receivable system.
+        title: RemittanceInformation
+        type: object
+        properties:
+          Reference:
+            $ref: '#/definitions/BECSRemittance'
+        additionalProperties: false
+    required:
+      - InstructionIdentification
+      - EndToEndIdentification
+      - InstructedAmount
+      - CreditorAccount
+      - RemittanceInformation
+    additionalProperties: false
+securityDefinitions:
+  PSUOAuth2Security:
+    type: oauth2
+    flow: accessCode
+    tokenUrl: 'https://authserver.example/token'
+    authorizationUrl: 'https://authserver.example/authorization'
+    scopes:
+      payments: Generic payment scope
+    description: >-
+      OAuth flow, it is required when the PSU needs to perform SCA with the
+      ASPSP when a TPP wants to access an ASPSP resource owned by the PSU
+  TPPOAuth2Security:
+    type: oauth2
+    flow: application
+    tokenUrl: 'https://authserver.example/token'
+    scopes:
+      tpp_client_credential: TPP Client Credential Scope
+    description: TPP client credential authorisation flow with the ASPSP
+tags:
+  - name: Payments
+    description: Payments endpoints
+responses:
+  400ErrorResponse: *ref_5
+  401ErrorResponse: *ref_6
+  403ErrorResponse: *ref_7
+  405ErrorResponse: *ref_8
+  406ErrorResponse: *ref_9
+  429ErrorResponse: *ref_10
+  500ErrorResponse: *ref_11
