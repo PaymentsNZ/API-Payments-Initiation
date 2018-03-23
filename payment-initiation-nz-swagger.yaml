@@ -11,8 +11,8 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.0.5
-basePath: /open-banking/v1
+  version: v0.1.0
+basePath: /open-banking/v0.1
 schemes:
   - https
 produces:
