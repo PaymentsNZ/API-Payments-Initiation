@@ -2,6 +2,11 @@
 
 ---
 
+## v0.1.0 - 23/03/2018
+
+* Changed base path to /open-banking/v0.1
+* Version bump specification to v0.1.0 to reflect MINOR change to stabilise for pilot
+
 ## v0.0.5 - 12/03/2018
 
 * Update BECSRemittance object to include DebtorName in reference information.  This is particularly to support the merchant payment scenario, where no debtor account informaiton is supplied in the API request (account information)[] (only creditor/merchant information is supplied in the API request).  Field is optional, and at the same object tree depth as CreditorName.
