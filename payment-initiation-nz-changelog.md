@@ -2,6 +2,10 @@
 
 ---
 
+## v0.1.1 - 04/05/2018
+
+* Added account number format description of 2-4-7-2 hyphen-delimited as recommended by Payments NZ working group and accepted by standards sub-group on 4/05/2018.  This has been added to both Debtor and Creditor account identifiers in OpenAPI specification.
+
 ## v0.1.0 - 23/03/2018
 
 * Changed base path to /open-banking/v0.1
