@@ -796,4 +796,4 @@ responses:
   406ErrorResponse: *ref_9
   429ErrorResponse: *ref_10
   500ErrorResponse: *ref_11
-  501fit ErrorResponse: *ref_14
+  501ErrorResponse: *ref_14
