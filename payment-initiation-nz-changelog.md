@@ -1,6 +1,9 @@
 # Payments API changelog
 
 ---
+## V0.1.2 - 6/06/2018
+* Changing URL to open-banking-nz
+* Add 501 status for optional APIs
 
 ## v0.1.1 - 04/05/2018
 

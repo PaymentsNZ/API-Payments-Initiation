@@ -11,8 +11,8 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.1.1
-basePath: /open-banking/v0.1
+  version: v0.1.2
+basePath: /open-banking-nz/v0.1
 schemes:
   - https
 produces:
@@ -225,6 +225,8 @@ paths:
         '406': *ref_9
         '429': *ref_10
         '500': *ref_11
+        '501': &ref_14
+          description: Not Implemented
       security:
         - PSUOAuth2Security:
             - payments
@@ -375,6 +377,7 @@ paths:
         '406': *ref_9
         '429': *ref_10
         '500': *ref_11
+        '501': *ref_14
       security:
         - PSUOAuth2Security:
             - payments
@@ -793,3 +796,4 @@ responses:
   406ErrorResponse: *ref_9
   429ErrorResponse: *ref_10
   500ErrorResponse: *ref_11
+  501ErrorResponse: *ref_14
