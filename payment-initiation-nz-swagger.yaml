@@ -11,8 +11,8 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.1.2
-basePath: /open-banking-nz/v0.1
+  version: v0.2.0
+basePath: /open-banking-nz/v0.2
 schemes:
   - https
 produces:
@@ -632,8 +632,8 @@ definitions:
             enum:
               - IBAN
               - SortCodeAccountNumber
-              - BECS Electronic Credit
-            default: BECS Electronic Credit
+              - BECSElectronicCredit
+            default: BECSElectronicCredit
           Identification:
             description: >-
               Identification assigned by an institution to identify an account.
@@ -710,8 +710,8 @@ definitions:
             enum:
               - IBAN
               - SortCodeAccountNumber
-              - BECS Electronic Credit
-            default: BECS Electronic Credit
+              - BECSElectronicCredit
+            default: BECSElectronicCredit
           Identification:
             description: >-
               Identification assigned by an institution to identify an account.
