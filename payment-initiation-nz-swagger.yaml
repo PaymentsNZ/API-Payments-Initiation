@@ -11,7 +11,7 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.2.0
+  version: v0.2.1
 basePath: /open-banking-nz/v0.2
 schemes:
   - https
@@ -416,6 +416,101 @@ definitions:
   Risk:
     type: object
     description: Placeholder to maintain structure similar to upstream
+    properties:
+      PaymentContextCode:
+        description: Specifies the payment context
+        title: PaymentContextCode
+        type: string
+        enum:
+          - BillPayment
+          - EcommerceGoods
+          - EcommerceServices
+          - Other
+          - PersonToPerson
+      MerchantCategoryCode:
+        description: >-
+          Category code conforms to ISO 18245, related to the type
+          of services or goods the merchant provides for the
+          transaction
+        type: string
+        minLength: 3
+        maxLength: 4
+      MerchantCustomerIdentification:
+        description: >-
+          The unique customer identifier of the PSU with the
+          merchant.
+        type: string
+        minLength: 1
+        maxLength: 70
+      DeliveryAddress:
+        description: >-
+          Information that locates and identifies a specific
+          address, as defined by postal services or in free format
+          text.
+        type: object
+        properties:
+          AddressLine:
+            description: >-
+              Information that locates and identifies a specific
+              address, as defined by postal services, that is
+              presented in free format text.
+            type: array
+            items:
+              description: maxLength 70 text
+              type: string
+              minLength: 1
+              maxLength: 70
+            minItems: 0
+            maxItems: 2
+          StreetName:
+            description: Name of a street or thoroughfare
+            type: string
+            minLength: 1
+            maxLength: 70
+          BuildingNumber:
+            description: >-
+              Number that identifies the position of a building on a
+              street.
+            type: string
+            minLength: 1
+            maxLength: 16
+          PostCode:
+            description: >-
+              Identifier consisting of a group of letters and/or
+              numbers that is added to a postal address to assist
+              the sorting of mail
+            type: string
+            minLength: 1
+            maxLength: 16
+          TownName:
+            description: >-
+              Name of a built-up area, with defined boundaries, and
+              a local government.
+            type: string
+            minLength: 1
+            maxLength: 35
+          CountrySubDivision:
+            description: >-
+              Identifies a subdivision of a country, for instance
+              state, region, county.
+            type: array
+            items:
+              description: maxLength 35 text
+              type: string
+              minLength: 1
+              maxLength: 35
+            minItems: 0
+            maxItems: 2
+          Country:
+            description: >-
+              Nation with its own government, occupying a particular
+              territory.
+            type: string
+            pattern: '^[A-Z]{2,2}$'
+        required:
+          - TownName
+          - Country
+        additionalProperties: false
     additionalProperties: false
   BECSRemittance:
     description: >-
@@ -630,8 +725,6 @@ definitions:
             title: SchemeName
             type: string
             enum:
-              - IBAN
-              - SortCodeAccountNumber
               - BECSElectronicCredit
             default: BECSElectronicCredit
           Identification:
@@ -708,8 +801,6 @@ definitions:
             title: SchemeName
             type: string
             enum:
-              - IBAN
-              - SortCodeAccountNumber
               - BECSElectronicCredit
             default: BECSElectronicCredit
           Identification:

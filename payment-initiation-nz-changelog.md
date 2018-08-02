@@ -2,6 +2,11 @@
 
 ---
 
+## V0.2.1 - 26/07/2018
+
+Add Risk section in, same as upstream standard.
+Remove IBAN and SortCodeAccountNumber from Debtor and Creditor AccountScheme enums. Leaving as `enum` for now, so values can be added later.
+
 ## V0.2.0 - 15/06/2018
 
 * Version bump to v0.2.0 indicating re-inclusion of OpenID Connect into authorisation flow
