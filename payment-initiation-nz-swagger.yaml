@@ -11,8 +11,8 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.2.1
-basePath: /open-banking-nz/v0.2
+  version: v0.3.0
+basePath: /open-banking-nz/v0.3
 schemes:
   - https
 produces:
@@ -594,10 +594,13 @@ definitions:
           2017-04-05T10:43:07+00:00
         type: string
         format: date-time
+      Initiation:
+        $ref: "#/definitions/PaymentInitiation"
     required:
       - PaymentSubmissionId
       - PaymentId
       - CreationDateTime
+      - Initiation
     additionalProperties: false
   PaymentResponse:
     description: Response that reflects the status of payment setup

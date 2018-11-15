@@ -2,6 +2,12 @@
 
 ---
 
+## V0.3.0 - 16/11/2018
+
+Add full payment data to `payment-submissions` response (`GET` and `POST`). **Note:** this is different to upstream, but supports identification of debtor account for refund scenarios.
+
+Version bump in swagger specification to v0.3.0 and URL to v0.3.
+
 ## V0.2.1 - 26/07/2018
 
 Add Risk section in, same as upstream standard.
