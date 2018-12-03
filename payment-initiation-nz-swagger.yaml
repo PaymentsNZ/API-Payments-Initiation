@@ -513,6 +513,7 @@ definitions:
         additionalProperties: false
     additionalProperties: false
   BECSRemittance:
+    type: object
     description: >-
       Remittance information for use with BECS Electronic Credit payment scheme.
       The Particulars, Code and Reference fields are currently constrained to
@@ -556,6 +557,7 @@ definitions:
       - CreditorName
     additionalProperties: false
   PaymentSubmissionResponse:
+    type: object
     description: Response that reflects the payment processing status
     properties:
       PaymentSubmissionId:
@@ -603,6 +605,7 @@ definitions:
       - Initiation
     additionalProperties: false
   PaymentResponse:
+    type: object
     description: Response that reflects the status of payment setup
     properties:
       PaymentId:
