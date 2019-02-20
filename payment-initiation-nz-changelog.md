@@ -4,7 +4,7 @@
 
 ## V0.3.1 19/02/2019
 
-Refactored parameters and HTTP responses.
+Refactored parameters and HTTP responses, no functional or interface change.
 
 ## V0.3.0 - 16/11/2018
 
