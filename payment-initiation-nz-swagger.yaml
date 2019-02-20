@@ -11,7 +11,7 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.3.0
+  version: v0.3.1
 basePath: /open-banking-nz/v0.3
 schemes:
   - https
@@ -30,66 +30,13 @@ paths:
       produces:
         - application/json; charset=utf-8
       parameters:
-        - &ref_12
-          name: x-idempotency-key
-          in: header
-          description: >-
-            Every request will be processed only once per x-idempotency-key. 
-            The Idempotency Key will be valid for 24 hours.
-          required: true
-          type: string
-          pattern: ^(?!\s)(.*)(\S)$
-          maxLength: 40
-        - &ref_0
-          in: header
-          name: x-fapi-financial-id
-          type: string
-          required: false
-          description: >-
-            The unique id of the ASPSP to which the request is issued. The
-            unique id will be issued by OB.
-        - &ref_1
-          in: header
-          name: x-fapi-customer-last-logged-time
-          type: string
-          required: false
-          description: >-
-            The time when the PSU last logged in with the TPP. 
-
-            All dates in the HTTP headers are represented as RFC 7231 Full
-            Dates. An example is below: 
-
-            Sun, 10 Sep 2017 19:43:31 UTC
-          pattern: >-
-            ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}
-            (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4}
-            \d{2}:\d{2}:\d{2} (GMT|UTC)$
-        - &ref_2
-          in: header
-          name: x-fapi-customer-ip-address
-          type: string
-          required: false
-          description: The PSU's IP address if the PSU is currently logged in with the TPP.
-        - &ref_3
-          in: header
-          name: x-fapi-interaction-id
-          type: string
-          required: false
-          description: An RFC4122 UID used as a correlation id.
-        - &ref_4
-          in: header
-          name: Authorization
-          type: string
-          required: true
-          description: 'An Authorisation Token as per https://tools.ietf.org/html/rfc6750'
-        - &ref_13
-          in: header
-          name: x-jws-signature
-          type: string
-          required: false
-          description: >-
-            Header containing a detached JWS signature of the body of the
-            payload.
+        - $ref: '#/parameters/x-idempotency-key-Param'
+        - $ref: '#/parameters/x-fapi-financial-id-Param'
+        - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
+        - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
+        - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/AuthorizationParam'
+        - $ref: '#/parameters/x-jws-signature-Param'
         - name: body
           in: body
           description: Setup a single immediate payment
@@ -145,24 +92,20 @@ paths:
             x-fapi-interaction-id:
               type: string
               description: An RFC4122 UID used as a correlation id.
-        '400': &ref_5
-          description: Bad Request
-        '401': &ref_6
-          description: Unauthorized
-        '403': &ref_7
-          description: Forbidden
-        '405': &ref_8
-          description: Method Not Allowed
-        '406': &ref_9
-          description: Not Acceptable
-        '429': &ref_10
-          description: Too Many Requests
-          headers:
-            Retry-After:
-              description: Number in seconds to wait
-              type: integer
-        '500': &ref_11
-          description: Internal Server Error
+        '400':
+          $ref: '#/responses/400ErrorResponse'  
+        '401': 
+          $ref: '#/responses/401ErrorResponse'
+        '403': 
+          $ref: '#/responses/403ErrorResponse'
+        '405':
+          $ref: '#/responses/405ErrorResponse'
+        '406':
+          $ref: '#/responses/406ErrorResponse'
+        '429':
+          $ref: '#/responses/429ErrorResponse'
+        '500': 
+          $ref: '#/responses/500ErrorResponse'
       security:
         - TPPOAuth2Security:
             - tpp_client_credential
@@ -176,18 +119,12 @@ paths:
       produces:
         - application/json; charset=utf-8
       parameters:
-        - name: PaymentId
-          in: path
-          description: >-
-            Unique identification as assigned by the ASPSP to uniquely identify
-            the payment setup resource.
-          required: true
-          type: string
-        - *ref_0
-        - *ref_1
-        - *ref_2
-        - *ref_3
-        - *ref_4
+        - $ref: '#/parameters/PaymentIdParam'
+        - $ref: '#/parameters/x-fapi-financial-id-Param'
+        - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
+        - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
+        - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
           description: Payment resource successfully retrieved
@@ -218,15 +155,22 @@ paths:
             x-fapi-interaction-id:
               type: string
               description: An RFC4122 UID used as a correlation id.
-        '400': *ref_5
-        '401': *ref_6
-        '403': *ref_7
-        '405': *ref_8
-        '406': *ref_9
-        '429': *ref_10
-        '500': *ref_11
-        '501': &ref_14
-          description: Not Implemented
+        '400': 
+          $ref: '#/responses/400ErrorResponse'
+        '401': 
+          $ref: '#/responses/400ErrorResponse'
+        '403':
+          $ref: '#/responses/403ErrorResponse'
+        '405':
+          $ref: '#/responses/405ErrorResponse'
+        '406':
+          $ref: '#/responses/406ErrorResponse'
+        '429':
+          $ref: '#/responses/429ErrorResponse'
+        '500':
+          $ref: '#/responses/500ErrorResponse'
+        '501':
+          $ref: '#/responses/501ErrorResponse'
       security:
         - PSUOAuth2Security:
             - payments
@@ -244,13 +188,13 @@ paths:
       produces:
         - application/json; charset=utf-8
       parameters:
-        - *ref_12
-        - *ref_0
-        - *ref_1
-        - *ref_2
-        - *ref_3
-        - *ref_4
-        - *ref_13
+        - $ref: '#/parameters/x-idempotency-key-Param'
+        - $ref: '#/parameters/x-fapi-financial-id-Param'
+        - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
+        - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
+        - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/AuthorizationParam'
+        - $ref: '#/parameters/x-jws-signature-Param'
         - name: body
           in: body
           description: Setup a single immediate payment
@@ -311,13 +255,20 @@ paths:
             x-fapi-interaction-id:
               type: string
               description: An RFC4122 UID used as a correlation id.
-        '400': *ref_5
-        '401': *ref_6
-        '403': *ref_7
-        '405': *ref_8
-        '406': *ref_9
-        '429': *ref_10
-        '500': *ref_11
+        '400': 
+          $ref: '#/responses/400ErrorResponse'
+        '401': 
+          $ref: '#/responses/400ErrorResponse'
+        '403':
+          $ref: '#/responses/403ErrorResponse'
+        '405':
+          $ref: '#/responses/405ErrorResponse'
+        '406':
+          $ref: '#/responses/406ErrorResponse'
+        '429':
+          $ref: '#/responses/429ErrorResponse'
+        '500':
+          $ref: '#/responses/500ErrorResponse'
       security:
         - PSUOAuth2Security:
             - payments
@@ -331,18 +282,12 @@ paths:
       produces:
         - application/json; charset=utf-8
       parameters:
-        - name: PaymentSubmissionId
-          in: path
-          description: >-
-            Unique identification as assigned by the ASPSP to uniquely identify
-            the payment submission resource.
-          required: true
-          type: string
-        - *ref_0
-        - *ref_1
-        - *ref_2
-        - *ref_3
-        - *ref_4
+        - $ref: '#/parameters/PaymentSubmissionIdParam'
+        - $ref: '#/parameters/x-fapi-financial-id-Param'
+        - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
+        - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
+        - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
           description: Payment resource successfully retrieved
@@ -370,19 +315,103 @@ paths:
             x-fapi-interaction-id:
               type: string
               description: An RFC4122 UID used as a correlation id.
-        '400': *ref_5
-        '401': *ref_6
-        '403': *ref_7
-        '405': *ref_8
-        '406': *ref_9
-        '429': *ref_10
-        '500': *ref_11
-        '501': *ref_14
+        '400': 
+          $ref: '#/responses/400ErrorResponse'
+        '401': 
+          $ref: '#/responses/400ErrorResponse'
+        '403':
+          $ref: '#/responses/403ErrorResponse'
+        '405':
+          $ref: '#/responses/405ErrorResponse'
+        '406':
+          $ref: '#/responses/406ErrorResponse'
+        '429':
+          $ref: '#/responses/429ErrorResponse'
+        '500':
+          $ref: '#/responses/500ErrorResponse'
+        '501':
+          $ref: '#/responses/501ErrorResponse'
       security:
         - PSUOAuth2Security:
             - payments
         - TPPOAuth2Security:
             - tpp_client_credential
+parameters:
+  x-idempotency-key-Param:
+    name: x-idempotency-key
+    in: header
+    description: >-
+      Every request will be processed only once per x-idempotency-key. 
+      The Idempotency Key will be valid for 24 hours.
+    required: true
+    type: string
+    pattern: ^(?!\s)(.*)(\S)$
+    maxLength: 40
+  x-fapi-financial-id-Param:
+    in: header
+    name: x-fapi-financial-id
+    type: string
+    required: false
+    description: >-
+      The unique id of the ASPSP to which the request is issued. The unique id
+      will be issued by OB.
+  x-fapi-customer-ip-address-Param:
+    in: header
+    name: x-fapi-customer-ip-address
+    type: string
+    required: false
+    description: The PSU's IP address if the PSU is currently logged in with the TPP.
+  x-fapi-interaction-id-Param:
+    in: header
+    name: x-fapi-interaction-id
+    type: string
+    required: false
+    description: An RFC4122 UID used as a correlation id.
+  x-fapi-customer-last-logged-time-Param:
+    in: header
+    name: x-fapi-customer-last-logged-time
+    type: string
+    required: false
+    description: >-
+      The time when the PSU last logged in with the TPP. 
+
+      All dates in the HTTP headers are represented as RFC 7231 Full Dates. An
+      example is below: 
+
+      Sun, 10 Sep 2017 19:43:31 UTC
+    pattern: >-
+      ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}
+      (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2}
+      (GMT|UTC)$
+  AuthorizationParam:
+    in: header
+    name: Authorization
+    type: string
+    required: true
+    description: 'An Authorisation Token as per https://tools.ietf.org/html/rfc6750'
+  x-jws-signature-Param:
+    in: header
+    name: x-jws-signature
+    type: string
+    required: false
+    description: >-
+      Header containing a detached JWS signature of the body of the payload.
+  PaymentIdParam:
+    name: PaymentId
+    in: path
+    description: >-
+      Unique identification as assigned by the ASPSP to uniquely identify
+      the payment setup resource.
+    required: true
+    type: string
+  PaymentSubmissionIdParam:
+    name: PaymentSubmissionId
+    in: path
+    description: >-
+      Unique identification as assigned by the ASPSP to uniquely identify
+      the payment submission resource.
+    required: true
+    type: string
 definitions:
   Meta:
     type: object
@@ -886,11 +915,23 @@ tags:
   - name: Payments
     description: Payments endpoints
 responses:
-  400ErrorResponse: *ref_5
-  401ErrorResponse: *ref_6
-  403ErrorResponse: *ref_7
-  405ErrorResponse: *ref_8
-  406ErrorResponse: *ref_9
-  429ErrorResponse: *ref_10
-  500ErrorResponse: *ref_11
-  501ErrorResponse: *ref_14
+  400ErrorResponse:
+    description: Bad Request
+  401ErrorResponse:
+    description: Unauthorized
+  403ErrorResponse:
+    description: Forbidden
+  405ErrorResponse:
+    description: Method Not Allowed
+  406ErrorResponse:
+    description: Not Acceptable
+  429ErrorResponse:
+    description: Too Many Requests
+    headers:
+      Retry-After:
+        description: Number in seconds to wait
+        type: integer
+  500ErrorResponse:
+    description: Internal Server Error
+  501ErrorResponse:
+    description: Not Implemented
