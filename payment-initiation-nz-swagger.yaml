@@ -109,8 +109,8 @@ paths:
         '500': 
           $ref: '#/responses/500ErrorResponse'
       security:
-        - TPPOAuth2Security:
-            - tpp_client_credential
+        - ThirdPartyOAuth2Security:
+            - payments
   '/payments/{PaymentId}':
     get:
       tags:
@@ -174,10 +174,8 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
+        - ThirdPartyOAuth2Security:
             - payments
-        - TPPOAuth2Security:
-            - tpp_client_credential
   /payment-submissions:
     post:
       tags:
@@ -274,7 +272,7 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
+        - CustomerOAuth2Security:
             - payments
   '/payment-submissions/{PaymentSubmissionId}':
     get:
@@ -336,10 +334,8 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
+        - CustomerOAuth2Security:
             - payments
-        - TPPOAuth2Security:
-            - tpp_client_credential
 parameters:
   x-idempotency-key-Param:
     name: x-idempotency-key
@@ -932,7 +928,7 @@ definitions:
       - RemittanceInformation
     additionalProperties: false
 securityDefinitions:
-  PSUOAuth2Security:
+  CustomerOAuth2Security:
     type: oauth2
     flow: accessCode
     tokenUrl: 'https://authserver.example/token'
@@ -942,12 +938,12 @@ securityDefinitions:
     description: >-
       OAuth flow, it is required when the Customer needs to perform SCA with the
       API Provider when a Third Party wants to access an API Provider resource owned by the Customer
-  TPPOAuth2Security:
+  ThirdPartyOAuth2Security:
     type: oauth2
     flow: application
     tokenUrl: 'https://authserver.example/token'
     scopes:
-      tpp_client_credential: Third Party Client Credential Scope
+      payments: Generic payment scope
     description: Third Party client credential authorisation flow with the API Provider
 tags:
   - name: Payments
