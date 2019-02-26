@@ -46,7 +46,7 @@ When a TPP tries to access a resource that it does not have permission to access
 
 The situation could arise when:
 
-* The TPP uses an access token that does not have the approporiate scope to access the requested resource.
+* The TPP uses an access token that does not have the appropriate scope to access the requested resource.
 * The TPP attempted to access a resource with an Id that it does not have access to. E.g., an attempt to access GET /payments/1001 where a payment resource with id 1001 belongs to another TPP.
 
 When the TPP uses an access token that is no longer valid, the situation could potentially be remedied by asking the PSU to re-authenticate. This should be indicated by a 401 (Unauthorized) status code.

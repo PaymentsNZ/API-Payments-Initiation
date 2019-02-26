@@ -11,8 +11,8 @@ info:
   license:
     name: Licence
     url: 'http://www.paymentsnz.co.nz/licence'
-  version: v0.3.1
-basePath: /open-banking-nz/v0.3
+  version: v1.0.0
+basePath: /open-banking-nz/v1.0
 schemes:
   - https
 produces:
@@ -35,6 +35,8 @@ paths:
         - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/x-merchant-ip-address-Param'
+        - $ref: '#/parameters/x-customer-user-agent-Param'
         - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-jws-signature-Param'
         - name: body
@@ -124,6 +126,8 @@ paths:
         - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/x-merchant-ip-address-Param'
+        - $ref: '#/parameters/x-customer-user-agent-Param'
         - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
@@ -169,8 +173,6 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
-        '501':
-          $ref: '#/responses/501ErrorResponse'
       security:
         - PSUOAuth2Security:
             - payments
@@ -193,6 +195,8 @@ paths:
         - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/x-merchant-ip-address-Param'
+        - $ref: '#/parameters/x-customer-user-agent-Param'
         - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-jws-signature-Param'
         - name: body
@@ -211,7 +215,7 @@ paths:
                 properties:
                   PaymentId:
                     description: >-
-                      OB: Unique identification as assigned by the ASPSP to
+                      Unique identification as assigned by the API Provider to
                       uniquely identify the payment setup resource.
                     type: string
                     minLength: 1
@@ -287,6 +291,8 @@ paths:
         - $ref: '#/parameters/x-fapi-customer-last-logged-time-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
+        - $ref: '#/parameters/x-merchant-ip-address-Param'
+        - $ref: '#/parameters/x-customer-user-agent-Param'
         - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
@@ -329,8 +335,6 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
-        '501':
-          $ref: '#/responses/501ErrorResponse'
       security:
         - PSUOAuth2Security:
             - payments
@@ -353,14 +357,14 @@ parameters:
     type: string
     required: false
     description: >-
-      The unique id of the ASPSP to which the request is issued. The unique id
+      The unique id of the API Provider to which the request is issued. The unique id
       will be issued by OB.
   x-fapi-customer-ip-address-Param:
     in: header
     name: x-fapi-customer-ip-address
     type: string
     required: false
-    description: The PSU's IP address if the PSU is currently logged in with the TPP.
+    description: The Customer's IP address if the Customer is currently logged in with the Third Party.
   x-fapi-interaction-id-Param:
     in: header
     name: x-fapi-interaction-id
@@ -373,7 +377,7 @@ parameters:
     type: string
     required: false
     description: >-
-      The time when the PSU last logged in with the TPP. 
+      The time when the Customer last logged in with the Third Party. 
 
       All dates in the HTTP headers are represented as RFC 7231 Full Dates. An
       example is below: 
@@ -383,6 +387,21 @@ parameters:
       ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}
       (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \d{4} \d{2}:\d{2}:\d{2}
       (GMT|UTC)$
+  x-merchant-ip-address-Param:
+    in: header
+    name: x-merchant-ip-address
+    type: string
+    required: false
+    description: >-
+      The IP address of the merchant when making payment requests through a Third Party.
+  x-customer-user-agent-Param:
+    in: header
+    name: x-customer-user-agent
+    type: string
+    required: false
+    description: >-
+      The User-Agent of the application on the customer device that is used
+      to request the payment
   AuthorizationParam:
     in: header
     name: Authorization
@@ -400,7 +419,7 @@ parameters:
     name: PaymentId
     in: path
     description: >-
-      Unique identification as assigned by the ASPSP to uniquely identify
+      Unique identification as assigned by the API Provider to uniquely identify
       the payment setup resource.
     required: true
     type: string
@@ -408,7 +427,7 @@ parameters:
     name: PaymentSubmissionId
     in: path
     description: >-
-      Unique identification as assigned by the ASPSP to uniquely identify
+      Unique identification as assigned by the API Provider to uniquely identify
       the payment submission resource.
     required: true
     type: string
@@ -446,6 +465,22 @@ definitions:
     type: object
     description: Placeholder to maintain structure similar to upstream
     properties:
+      GeoLocation:
+        description: >-
+          Location of the end-user on the earth specified by two numbers
+          representing vertical and horizontal position
+        type: object
+        properties:
+          Latitude:
+            description: Latitude measured in decimal degress
+            type: string
+            maxLength: 12
+            pattern: ^-?\\d{1,3}\\.\\d{1,8}$
+          Longitude:
+            description: Longitude measured in decimal degress
+            type: string
+            maxLength: 12
+            pattern: ^-?\\d{1,3}\\.\\d{1,8}$
       PaymentContextCode:
         description: Specifies the payment context
         title: PaymentContextCode
@@ -466,7 +501,7 @@ definitions:
         maxLength: 4
       MerchantCustomerIdentification:
         description: >-
-          The unique customer identifier of the PSU with the
+          The unique customer identifier of the Customer with the
           merchant.
         type: string
         minLength: 1
@@ -540,6 +575,30 @@ definitions:
           - TownName
           - Country
         additionalProperties: false
+      AppName:
+        description: >-
+          Name of the third party application
+        type: string
+        minLength: 1
+        maxLength: 70
+      AppVersion:
+        description: >-
+          Version of the third party application
+        type: string
+        minLength: 1
+        maxLength: 15
+      MerchantName:
+        description: >-
+          Name of the merchant
+        type: string
+        minLength: 1
+        maxLength: 70
+      MerchantNZBN:
+        description: >-
+          NZ business number for the merchant
+        type: string
+        minLength: 1
+        maxLength: 70
     additionalProperties: false
   BECSRemittance:
     type: object
@@ -591,14 +650,14 @@ definitions:
     properties:
       PaymentSubmissionId:
         description: >-
-          OB: Unique identification as assigned by the ASPSP to uniquely
+          Unique identification as assigned by the API Provider to uniquely
           identify the payment submission resource.
         type: string
         minLength: 1
         maxLength: 40
       PaymentId:
         description: >-
-          OB: Unique identification as assigned by the ASPSP to uniquely
+          Unique identification as assigned by the API Provider to uniquely
           identify the payment setup resource.
         type: string
         minLength: 1
@@ -630,6 +689,7 @@ definitions:
     required:
       - PaymentSubmissionId
       - PaymentId
+      - Status
       - CreationDateTime
       - Initiation
     additionalProperties: false
@@ -639,7 +699,7 @@ definitions:
     properties:
       PaymentId:
         description: >-
-          OB: Unique identification as assigned by the ASPSP to uniquely
+          Unique identification as assigned by the API Provider to uniquely
           identify the payment setup resource.
         type: string
         minLength: 1
@@ -666,6 +726,7 @@ definitions:
         $ref: '#/definitions/PaymentInitiation'
     required:
       - PaymentId
+      - Status
       - CreationDateTime
       - Initiation
     additionalProperties: false
@@ -692,9 +753,9 @@ definitions:
           on, unchanged, throughout the entire end-to-end chain. Usage: The
           end-to-end identification can be used for reconciliation or to link
           tasks relating to the transaction. It can be included in several
-          messages related to the transaction. OB: The Faster Payments Scheme
-          can only access 31 characters for the EndToEndIdentification field.
-          OBNZ: Updated to 36 characters to allow v4 UUID
+          messages related to the transaction. 
+          
+          Updated to 36 characters to allow v4 UUID
         type: string
         minLength: 1
         maxLength: 36
@@ -720,31 +781,6 @@ definitions:
         required:
           - Amount
           - Currency
-        additionalProperties: false
-      DebtorAgent:
-        description: Financial institution servicing an account for the debtor.
-        title: DebtorAgent
-        type: object
-        properties:
-          SchemeName:
-            description: >-
-              Name of the identification scheme, in a coded form as published in
-              an external list. 
-            title: SchemeName
-            type: string
-            enum:
-              - BICFI
-          Identification:
-            description: >-
-              Unique and unambiguous identification of an organisation. ISO20022
-              defines this:
-              https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YWZBNtp-Ed-ak6NoX_4Aeg_-1295138508
-            type: string
-            minLength: 1
-            maxLength: 35
-        required:
-          - SchemeName
-          - Identification
         additionalProperties: false
       DebtorAccount:
         description: >-
@@ -858,7 +894,7 @@ definitions:
               Usage: The account name is different from the account owner name.
               The account name is used in certain user communities to provide a
               means of identifying the account, in addition to the account
-              owner's identity and the account number. ASPSPs may carry out name
+              owner's identity and the account number. API Providers may carry out name
               validation for Confirmation of Payee, but it is not mandatory.
             type: string
             minLength: 1
@@ -902,15 +938,15 @@ securityDefinitions:
     scopes:
       payments: Generic payment scope
     description: >-
-      OAuth flow, it is required when the PSU needs to perform SCA with the
-      ASPSP when a TPP wants to access an ASPSP resource owned by the PSU
+      OAuth flow, it is required when the Customer needs to perform SCA with the
+      API Provider when a Third Party wants to access an API Provider resource owned by the Customer
   TPPOAuth2Security:
     type: oauth2
     flow: application
     tokenUrl: 'https://authserver.example/token'
     scopes:
-      tpp_client_credential: TPP Client Credential Scope
-    description: TPP client credential authorisation flow with the ASPSP
+      tpp_client_credential: Third Party Client Credential Scope
+    description: Third Party client credential authorisation flow with the API Provider
 tags:
   - name: Payments
     description: Payments endpoints
@@ -933,5 +969,3 @@ responses:
         type: integer
   500ErrorResponse:
     description: Internal Server Error
-  501ErrorResponse:
-    description: Not Implemented
