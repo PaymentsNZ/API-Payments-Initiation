@@ -575,15 +575,15 @@ definitions:
           - TownName
           - Country
         additionalProperties: false
-      AppName:
+      EndUserAppName:
         description: >-
-          Name of the third party application
+          Name of the end user facing application
         type: string
         minLength: 1
         maxLength: 70
-      AppVersion:
+      EndUserAppVersion:
         description: >-
-          Version of the third party application
+          Version of the end user facing application
         type: string
         minLength: 1
         maxLength: 15
