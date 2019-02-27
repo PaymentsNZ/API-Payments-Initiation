@@ -110,7 +110,7 @@ paths:
           $ref: '#/responses/500ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
-            - payments
+            - third_party_client_credential
   '/payments/{PaymentId}':
     get:
       tags:
@@ -175,7 +175,7 @@ paths:
           $ref: '#/responses/500ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
-            - payments
+            - third_party_client_credential
   /payment-submissions:
     post:
       tags:
@@ -943,7 +943,7 @@ securityDefinitions:
     flow: application
     tokenUrl: 'https://authserver.example/token'
     scopes:
-      payments: Generic payment scope
+      third_party_client_credential: Third Party client credential scope
     description: Third Party client credential authorisation flow with the API Provider
 tags:
   - name: Payments
