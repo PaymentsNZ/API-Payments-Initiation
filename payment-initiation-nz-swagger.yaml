@@ -109,8 +109,8 @@ paths:
         '500': 
           $ref: '#/responses/500ErrorResponse'
       security:
-        - TPPOAuth2Security:
-            - tpp_client_credential
+        - ThirdPartyOAuth2Security:
+            - third_party_client_credential
   '/payments/{PaymentId}':
     get:
       tags:
@@ -174,10 +174,8 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
-            - payments
-        - TPPOAuth2Security:
-            - tpp_client_credential
+        - ThirdPartyOAuth2Security:
+            - third_party_client_credential
   /payment-submissions:
     post:
       tags:
@@ -274,7 +272,7 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
+        - CustomerOAuth2Security:
             - payments
   '/payment-submissions/{PaymentSubmissionId}':
     get:
@@ -336,10 +334,8 @@ paths:
         '500':
           $ref: '#/responses/500ErrorResponse'
       security:
-        - PSUOAuth2Security:
+        - CustomerOAuth2Security:
             - payments
-        - TPPOAuth2Security:
-            - tpp_client_credential
 parameters:
   x-idempotency-key-Param:
     name: x-idempotency-key
@@ -364,7 +360,9 @@ parameters:
     name: x-fapi-customer-ip-address
     type: string
     required: false
-    description: The Customer's IP address if the Customer is currently logged in with the Third Party.
+    description:  >-
+      The Customer's IP address if the Customer is currently logged in 
+      with the Third Party.
   x-fapi-interaction-id-Param:
     in: header
     name: x-fapi-interaction-id
@@ -606,8 +604,8 @@ definitions:
     type: object
     description: >-
       Remittance information for use with BECS Electronic Credit payment scheme.
-      The Particulars, Code and Reference fields are currently constrained to
-      [insert].  The design choice has been made not to constrain through schema
+      The Particulars, Code and Reference fields are currently constrained by
+      providers.  The design choice has been made not to constrain through schema
       restrictions, to allow for future changes that remove the constraint. 
       Note that not all banks will accept all valid characters, in which case a
       descriptive 400 Bad Request will be returned. Constraining to a-z, A-Z, - 
@@ -740,10 +738,10 @@ definitions:
         description: >-
           Unique identification as assigned by an instructing party for an
           instructed party to unambiguously identify the instruction. Usage:
-          the  instruction identification is a point to point reference that can
+          the instruction identification is a point to point reference that can
           be used between the instructing party and the instructed party to
           refer to the individual instruction. It can be included in several
-          messages related to the instruction.  OBNZ: Updated to allow 36
+          messages related to the instruction. OBNZ: Updated to allow 36
           characters to allow for v4 UUID
         type: string
         minLength: 1
@@ -755,9 +753,8 @@ definitions:
           on, unchanged, throughout the entire end-to-end chain. Usage: The
           end-to-end identification can be used for reconciliation or to link
           tasks relating to the transaction. It can be included in several
-          messages related to the transaction. 
-          
-          Updated to 36 characters to allow v4 UUID
+          messages related to the transaction. OBNZ: Updated to 36 
+          characters to allow v4 UUID
         type: string
         minLength: 1
         maxLength: 36
@@ -826,8 +823,8 @@ definitions:
             maxLength: 70
           SecondaryIdentification:
             description: >-
-              Identification assigned by an institution to identify an account.
-              This identification is known by the account owner.
+              This is secondary identification of the account, as assigned by the account 
+              servicing institution.
             type: string
             minLength: 1
             maxLength: 34
@@ -903,8 +900,8 @@ definitions:
             maxLength: 70
           SecondaryIdentification:
             description: >-
-              Identification assigned by an institution to identify an account.
-              This identification is known by the account owner.
+              This is secondary identification of the account, as assigned by the 
+              account servicing institution.
             type: string
             minLength: 1
             maxLength: 34
@@ -932,7 +929,7 @@ definitions:
       - RemittanceInformation
     additionalProperties: false
 securityDefinitions:
-  PSUOAuth2Security:
+  CustomerOAuth2Security:
     type: oauth2
     flow: accessCode
     tokenUrl: 'https://authserver.example/token'
@@ -941,13 +938,14 @@ securityDefinitions:
       payments: Generic payment scope
     description: >-
       OAuth flow, it is required when the Customer needs to perform SCA with the
-      API Provider when a Third Party wants to access an API Provider resource owned by the Customer
-  TPPOAuth2Security:
+      API Provider when a Third Party wants to access an API Provider resource owned by 
+      the Customer
+  ThirdPartyOAuth2Security:
     type: oauth2
     flow: application
     tokenUrl: 'https://authserver.example/token'
     scopes:
-      tpp_client_credential: Third Party Client Credential Scope
+      third_party_client_credential: Third Party client credential scope
     description: Third Party client credential authorisation flow with the API Provider
 tags:
   - name: Payments
