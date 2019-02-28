@@ -2,6 +2,19 @@
 
 ---
 
+## V1.0.0 26/02/2019
+
+Minor updates to prep for v1.0.0 release:
+
+* Bumped version to v1.0.0 and URL to v1.0
+* Changed `Status` in `PaymentResponse` and `PaymentSubmissionResponse` to required
+* Removed `501 Not Implemented` on `GET` methods (mandatory to provide)
+* Removed `DebtorAgent` object
+* Added new Risk headers - `x-merchant-ip-address` and `x-customer-user-agent`
+* Added new `Risk` object items per Risk discussion page
+* Updated actor names to be consistent with NZ usage (PSU, ASPSP, TPP)
+* Removed `OB:` references
+
 ## V0.3.1 19/02/2019
 
 Refactored parameters and HTTP responses, no functional or interface change.
