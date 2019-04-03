@@ -162,7 +162,7 @@ paths:
         '400': 
           $ref: '#/responses/400ErrorResponse'
         '401': 
-          $ref: '#/responses/400ErrorResponse'
+          $ref: '#/responses/401ErrorResponse'
         '403':
           $ref: '#/responses/403ErrorResponse'
         '405':
@@ -260,7 +260,7 @@ paths:
         '400': 
           $ref: '#/responses/400ErrorResponse'
         '401': 
-          $ref: '#/responses/400ErrorResponse'
+          $ref: '#/responses/401ErrorResponse'
         '403':
           $ref: '#/responses/403ErrorResponse'
         '405':
@@ -322,7 +322,7 @@ paths:
         '400': 
           $ref: '#/responses/400ErrorResponse'
         '401': 
-          $ref: '#/responses/400ErrorResponse'
+          $ref: '#/responses/401ErrorResponse'
         '403':
           $ref: '#/responses/403ErrorResponse'
         '405':
