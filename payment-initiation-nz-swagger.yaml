@@ -307,6 +307,7 @@ paths:
                 $ref: '#/definitions/Meta'
             required:
               - Data
+              - Risk
               - Links
               - Meta
             additionalProperties: false
@@ -363,6 +364,7 @@ parameters:
     description:  >-
       The Customer's IP address if the Customer is currently logged in 
       with the Third Party.
+    pattern: ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
   x-fapi-interaction-id-Param:
     in: header
     name: x-fapi-interaction-id
@@ -392,6 +394,7 @@ parameters:
     required: false
     description: >-
       The IP address of the merchant when making payment requests through a Third Party.
+    pattern: ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
   x-customer-user-agent-Param:
     in: header
     name: x-customer-user-agent
