@@ -8,7 +8,7 @@ This is a private git repository of the Payments NZ API specifications.  It is u
 
 There is currently one API covered in the specifications here.  This is:
 
-* [Payment Initiation](payment-initiation-nz-swagger.yaml) - initiate a one-off payment in a person-to-person or person-to-merchant fashion
+* [Payment Initiation](./dist/v1.0.1/payment-initiation-nz-swagger.yaml) - initiate a one-off payment in a person-to-person or person-to-merchant fashion
 
 ## Files
 
