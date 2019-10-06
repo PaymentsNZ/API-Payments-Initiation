@@ -4,13 +4,13 @@ info:
   description: >-
     Swagger for Payment Initiation API Specification, This is heavily derived
     from the Open Banking UK API - see www.openbanking.org.uk for details.
-  termsOfService: 'https://www.paymentsnz.co.nz/contact-us'
+  termsOfService: 'https://www.apicentre.paymentsnz.co.nz/contact-us/'
   contact:
-    name: Service Desk
-    email: connect@paymentsnz.co.nz
+    name: Payments NZ API Centre
+    email: apicentre@paymentsnz.co.nz
   license:
     name: Licence
-    url: 'http://www.paymentsnz.co.nz/licence'
+    url: 'https://www.apicentre.paymentsnz.co.nz/join/'
   version: v2.0.0-draft3
 basePath: /open-banking-nz/v2.0
 schemes:
@@ -24,9 +24,10 @@ paths:
         - Enduring Payment Consents
       summary: Create an enduring payment consent
       description: >-
-        Create an enduring payment consent.  This type of consent
-        is intended to be use to create one or more payments over
-        a period.
+        The Consent payload is sent by the Third Party to the API Provider.
+        
+        It is used to request a long lived payment consent to move funds
+        from a debtor account to a creditor.
       operationId: CreateEnduringPaymentConsent
       consumes:
         - application/json; charset=utf-8
@@ -100,10 +101,16 @@ paths:
           $ref: '#/responses/405ErrorResponse'
         '406':
           $ref: '#/responses/406ErrorResponse'
+        '415':
+          $ref: '#/responses/406ErrorResponse'
         '429':
           $ref: '#/responses/429ErrorResponse'
         '500': 
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
@@ -168,6 +175,10 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
@@ -209,6 +220,10 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
@@ -291,10 +306,16 @@ paths:
           $ref: '#/responses/405ErrorResponse'
         '406':
           $ref: '#/responses/406ErrorResponse'
+        '415':
+          $ref: '#/responses/415ErrorResponse'
         '429':
           $ref: '#/responses/429ErrorResponse'
         '500': 
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
@@ -354,6 +375,10 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
@@ -441,10 +466,16 @@ paths:
           $ref: '#/responses/405ErrorResponse'
         '406':
           $ref: '#/responses/406ErrorResponse'
+        '415':
+          $ref: '#/responses/415ErrorResponse'
         '429':
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - CustomerOAuth2Security:
             - payments
@@ -502,6 +533,10 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - CustomerOAuth2Security:
             - payments
@@ -565,6 +600,10 @@ paths:
           $ref: '#/responses/429ErrorResponse'
         '500':
           $ref: '#/responses/500ErrorResponse'
+        '501': 
+          $ref: '#/responses/501ErrorResponse'
+        '503': 
+          $ref: '#/responses/503ErrorResponse'
       security:
         - CustomerOAuth2Security:
             - payments
@@ -967,25 +1006,6 @@ definitions:
     required:
       - CreditorName
     additionalProperties: false
-  AmountModel:
-    type: object
-    description: A monetary amount with value and currency
-    properties:
-      Amount:
-        type: string
-        pattern: '^\d{1,13}\.\d{1,5}$'
-      Currency:
-        description: >-
-          A code allocated to a currency by a Maintenance Agency under an
-          international identification scheme, as described in the latest
-          edition of the international standard ISO 4217 - Codes for the
-          representation of currencies and funds.
-        type: string
-        pattern: '^[A-Z]{3,3}$'
-    required:
-      - Amount
-      - Currency
-    additionalProperties: false
   DomesticPaymentResponse:
     type: object
     description: Response that reflects the status of a payment
@@ -1115,58 +1135,28 @@ definitions:
           deduction of charges, expressed in the currency as ordered by the
           initiating party. Usage: This amount has to be transported unchanged
           through the transaction chain.
-        $ref: "#/definitions/AmountModel"
-      DebtorAccount:
-        description: >-
-          Unambiguous identification of the account of the debtor to which a
-          debit entry will be made as a result of the transaction.
-        title: DebtorAccount
         type: object
         properties:
-          SchemeName:
+          Amount:
             description: >-
-              Name of the identification scheme, in a coded form as published in
-              an external list.
-            title: SchemeName
+              A number of monetary units specified in an active currency where
+              the unit of currency is explicit and compliant with ISO 4217.
             type: string
-            enum:
-              - BECSElectronicCredit
-            default: BECSElectronicCredit
-          Identification:
+            pattern: '^\d{1,13}\.\d{1,5}$'
+          Currency:
             description: >-
-              Identification assigned by an institution to identify an account.
-              This identification is known by the account owner. For the NZ
-              market, this will use the hyphen-delimited format: 2-4-7-2
-              where this is made up of bank-branch-account-suffix and each
-              of the four components is a number, prepended with leading zeros
-              to match the component length requirement.  
-              For example 12-0123-0012345-00
+              A code allocated to a currency by a Maintenance Agency under an
+              international identification scheme, as described in the latest
+              edition of the international standard ISO 4217 - Codes for the
+              representation of currencies and funds.
             type: string
-            minLength: 1
-            maxLength: 34
-          Name:
-            description: >-
-              Name of the account, as assigned by the account servicing
-              institution, in agreement with the account owner in order to
-              provide an additional means of identification of the account.
-              Usage: The account name is different from the account owner name.
-              The account name is used in certain user communities to provide a
-              means of identifying the account, in addition to the account
-              owner's identity and the account number.
-            type: string
-            minLength: 1
-            maxLength: 70
-          SecondaryIdentification:
-            description: >-
-              This is secondary identification of the account, as assigned by the account 
-              servicing institution.
-            type: string
-            minLength: 1
-            maxLength: 34
+            pattern: '^[A-Z]{3,3}$'
         required:
-          - SchemeName
-          - Identification
+          - Amount
+          - Currency
         additionalProperties: false
+      DebtorAccount:
+        $ref: '#/definitions/DebtorAccount'     
       CreditorAgent:
         description: Financial institution servicing an account for the creditor.
         title: CreditorAgent
@@ -1193,58 +1183,7 @@ definitions:
           - Identification
         additionalProperties: false
       CreditorAccount:
-        description: >-
-          Unambiguous identification of the account of the creditor to which a
-          credit entry will be posted as a result of the payment transaction.
-        title: CreditorAccount
-        type: object
-        properties:
-          SchemeName:
-            description: >-
-              Name of the identification scheme, in a coded form as published in
-              an external list.
-            title: SchemeName
-            type: string
-            enum:
-              - BECSElectronicCredit
-            default: BECSElectronicCredit
-          Identification:
-            description: >-
-              Identification assigned by an institution to identify an account.
-              This identification is known by the account owner. For the NZ
-              market, this will use the hyphen-delimited format: 2-4-7-2
-              where this is made up of bank-branch-account-suffix and each
-              of the four components is a number, prepended with leading zeros
-              to match the component length requirement.  
-              For example 12-0123-0012345-00
-            type: string
-            minLength: 1
-            maxLength: 34
-          Name:
-            description: >-
-              Name of the account, as assigned by the account servicing
-              institution, in agreement with the account owner in order to
-              provide an additional means of identification of the account.
-              Usage: The account name is different from the account owner name.
-              The account name is used in certain user communities to provide a
-              means of identifying the account, in addition to the account
-              owner's identity and the account number. API Providers may carry out name
-              validation for Confirmation of Payee, but it is not mandatory.
-            type: string
-            minLength: 1
-            maxLength: 70
-          SecondaryIdentification:
-            description: >-
-              This is secondary identification of the account, as assigned by the 
-              account servicing institution.
-            type: string
-            minLength: 1
-            maxLength: 34
-        required:
-          - SchemeName
-          - Identification
-          - Name
-        additionalProperties: false
+        $ref: '#/definitions/CreditorAccount'
       RemittanceInformation:
         description: >-
           Information supplied to enable the matching of an entry with the items
@@ -1264,7 +1203,11 @@ definitions:
       - RemittanceInformation
     additionalProperties: false
   EnduringPaymentConsent:
-    description: ''
+    description: >-
+      The Consent payload is sent by the Third Party to the API Provider. 
+      
+      It is used to request a long lived payment consent to move funds from a
+      debtor account to a creditor.
     type: object
     properties:
       FromDateTime:
@@ -1296,9 +1239,56 @@ definitions:
         type: boolean
         default: false
       TotalAmount:
-        $ref: "#/definitions/AmountModel"
+        description: >-
+          Maximum amount of money to be moved between the debtor and creditor
+          as a cumulative total for the duration of the enduring payment 
+          consent, before deduction of charges, expressed in the currency
+          as ordered by the initiating party.
+        type: object
+        properties:
+          Amount:
+            description: >-
+              A number of monetary units specified in an active currency where
+              the unit of currency is explicit and compliant with ISO 4217.
+            type: string
+            pattern: '^\d{1,13}\.\d{1,5}$'
+          Currency:
+            description: >-
+              A code allocated to a currency by a Maintenance Agency under an
+              international identification scheme, as described in the latest
+              edition of the international standard ISO 4217 - Codes for the
+              representation of currencies and funds.
+            type: string
+            pattern: '^[A-Z]{3,3}$'
+        required:
+          - Amount
+          - Currency
+        additionalProperties: false
       MaximumAmount:
-        $ref: "#/definitions/AmountModel"
+        description: >-
+          Maximum amount of money to be moved between the debtor and creditor
+          for an individual payment, before deduction of charges, expressed
+          in the currency as ordered by the initiating party.
+        type: object
+        properties:
+          Amount:
+            description: >-
+              A number of monetary units specified in an active currency where
+              the unit of currency is explicit and compliant with ISO 4217.
+            type: string
+            pattern: '^\d{1,13}\.\d{1,5}$'
+          Currency:
+            description: >-
+              A code allocated to a currency by a Maintenance Agency under an
+              international identification scheme, as described in the latest
+              edition of the international standard ISO 4217 - Codes for the
+              representation of currencies and funds.
+            type: string
+            pattern: '^[A-Z]{3,3}$'
+        required:
+          - Amount
+          - Currency
+        additionalProperties: false
       Frequency:
         type: object
         properties:
@@ -1314,7 +1304,31 @@ definitions:
             type: integer
             format: int32
           TotalAmount:
-            $ref: "#/definitions/AmountModel"
+            description: >-
+              Maximum amount of money to be moved between the debtor and
+              creditor during the period specified, before deduction of
+              charges, expressed in the currency as ordered by the initiating
+              party.
+            type: object
+            properties:
+              Amount:
+                description: >-
+                  A number of monetary units specified in an active currency where
+                  the unit of currency is explicit and compliant with ISO 4217.
+                type: string
+                pattern: '^\d{1,13}\.\d{1,5}$'
+              Currency:
+                description: >-
+                  A code allocated to a currency by a Maintenance Agency under an
+                  international identification scheme, as described in the latest
+                  edition of the international standard ISO 4217 - Codes for the
+                  representation of currencies and funds.
+                type: string
+                pattern: '^[A-Z]{3,3}$'
+            required:
+              - Amount
+              - Currency
+            additionalProperties: false
         required:
           - Period
           - TotalAmount
@@ -1407,6 +1421,8 @@ responses:
     description: Method Not Allowed
   406ErrorResponse:
     description: Not Acceptable
+  415ErrorResponse:
+    description: Unsupported Media Type
   429ErrorResponse:
     description: Too Many Requests
     headers:
@@ -1415,3 +1431,7 @@ responses:
         type: integer
   500ErrorResponse:
     description: Internal Server Error
+  501ErrorResponse:
+    description: Not Implemented
+  503ErrorResponse:
+    description: Service Unavailable
