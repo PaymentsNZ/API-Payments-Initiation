@@ -2,8 +2,8 @@ swagger: '2.0'
 info:
   title: Payment Initiation API Specification
   description: >-
-    Swagger for Payment Initiation API Specification, This is heavily derived
-    from the Open Banking UK API - see www.openbanking.org.uk for details.
+    Swagger for Payment Initiation API Specification. This is heavily derived from 
+    the Open Banking UK API - see www.openbanking.org.uk for details.
   termsOfService: 'https://www.apicentre.paymentsnz.co.nz/contact-us/'
   contact:
     name: Payments NZ API Centre
@@ -15,51 +15,40 @@ info:
 basePath: /open-banking-nz/v2.0
 schemes:
   - https
+consumes:
+  - application/json; charset=utf-8
 produces:
   - application/json; charset=utf-8
 paths:
-  /enduring-payment-consents:
+  '/enduring-payment-consents':
     post:
       tags:
         - Enduring Payment Consents
-      summary: Create an enduring payment consent
-      description: >-
-        The Consent payload is sent by the Third Party to the API Provider.
-        
-        It is used to request a long lived payment consent to move funds
-        from a debtor account to a creditor.
       operationId: CreateEnduringPaymentConsent
-      consumes:
-        - application/json; charset=utf-8
-      produces:
-        - application/json; charset=utf-8
+      summary: Create a new enduring-payment-consent resource
+      description: >-
+        The enduring-payment-consent resource represents a long lived payment-order 
+        consent that has been agreed between the Customer and the Third Party, and 
+        contains fields which describe the parameters for payment-order(s) that may 
+        be initiated by a Third Party on behalf of a Customer.
       parameters:
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-idempotency-key-Param'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
         - name: body
           in: body
-          description: Setup an enduring payment consent
+          description: Enduring Payment Consent Body
           required: true
           schema:
-            title: Enduring consent setup POST request
-            description: Allows setup of a enduring consent
+            title: Enduring Payment Consent
             type: object
             properties:
               Data:
-                description: ''
-                title: EnduringPaymentConsentSetup
-                type: object
-                properties:
-                  Consent:
-                    $ref: '#/definitions/EnduringPaymentConsent'
-                required:
-                  - Initiation
-                additionalProperties: false
+                $ref: '#/definitions/EnduringPaymentConsent'
               Risk:
                 $ref: '#/definitions/Risk'
             required:
@@ -68,9 +57,8 @@ paths:
             additionalProperties: false
       responses:
         '201':
-          description: Enduring Consent resource successfully created
+          description: Created
           schema:
-            title: Enduring Consent POST response
             type: object
             properties:
               Data:
@@ -118,29 +106,22 @@ paths:
     get:
       tags:
         - Enduring Payment Consents
-      summary: Retrieve an enduring payment consent
-      description: >-
-        Retrieve an enduring payment consent.  This type of consent
-        is intended to be use to create one or more payments over
-        a period.
       operationId: GetEnduringPaymentConsent
-      consumes:
-        - application/json; charset=utf-8
-      produces:
-        - application/json; charset=utf-8
+      summary: Retrieve an enduring-payment-consent resource
+      description: >-
+        Retrieve an enduring-payment-consent resource and check its status.
       parameters:
         - $ref: '#/parameters/ConsentIdParam'
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
-          description: Payment resource successfully retrieved
+          description: OK
           schema:
-            title: Payment setup GET response
             type: object
             properties:
               Data:
@@ -185,23 +166,22 @@ paths:
     delete:
       tags:
         - Enduring Payment Consents
-      summary: Delete an enduring payment consent
-      description: >-
-        Delete an enduring payment consent.  This type of consent
-        is intended to be use to create one or more payments over
-        a period.
       operationId: DeleteEnduringPaymentConsent
+      summary: Delete an enduring-payment-consent resource
+      description: >-
+        If the Customer revokes the enduring-payment-consent with the Third Party - 
+        the Third Party must delete the enduring-payment-consent resource. 
       parameters:
         - $ref: '#/parameters/ConsentIdParam'
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '204':
-          description: Payment resource successfully deleted
+          description: No Content
           headers:
             x-fapi-interaction-id:
               type: string
@@ -227,44 +207,35 @@ paths:
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
-  /domestic-payment-consents:
+  '/domestic-payment-consents':
     post:
       tags:
         - Domestic Payment Consents
-      summary: Create a one-off payment consent
-      description: Create a single, one-off payment consent
-      operationId: CreateSinglePaymentConsent
-      consumes:
-        - application/json; charset=utf-8
-      produces:
-        - application/json; charset=utf-8
+      operationId: CreateDomesticPaymentConsent
+      summary: Create a new domestic-payment-consent resource
+      description: >-
+        The domestic-payment-consent resource represents a short lived payment-order 
+        consent that has been agreed between the Customer and the Third Party, and 
+        contains fields which describe the parameters for a single domestic-payment 
+        that may be initiated by a Third Party on behalf of a Customer.
       parameters:
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-idempotency-key-Param'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
         - name: body
           in: body
-          description: Setup a single payment consent
+          description: Domestic Payment Consent Body
           required: true
           schema:
-            title: Payment Consent setup POST request
-            description: Allows setup of a payment consent
+            title: Domestic Payment Consent
             type: object
             properties:
               Data:
-                description: ''
-                title: PaymentConsent
-                type: object
-                properties:
-                  Consent:
-                    $ref: '#/definitions/DomesticPaymentConsent'
-                required:
-                  - Consent
-                additionalProperties: false
+                $ref: '#/definitions/DomesticPaymentConsent'
               Risk:
                 $ref: '#/definitions/Risk'
             required:
@@ -273,9 +244,8 @@ paths:
             additionalProperties: false
       responses:
         '201':
-          description: Payment consent setup resource successfully created
+          description: Created
           schema:
-            title: Payment consent setup POST response
             type: object
             properties:
               Data:
@@ -323,24 +293,21 @@ paths:
     get:
       tags:
         - Domestic Payment Consents
-      summary: Get a single immediate payment
-      description: Get a single immediate payment
-      operationId: GetSingleImmediatePayment
-      produces:
-        - application/json; charset=utf-8
+      operationId: GetDomesticPaymentConsent
+      summary: Retrieve an domestic-payment-consent resource
+      description: Retrieve an domestic-payment-consent resource and check its status.
       parameters:
         - $ref: '#/parameters/ConsentIdParam'
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
-          description: Payment resource successfully retrieved
+          description: OK
           schema:
-            title: Payment setup GET response
             type: object
             properties:
               Data:
@@ -382,52 +349,38 @@ paths:
       security:
         - ThirdPartyOAuth2Security:
             - third_party_client_credential
-  /domestic-payments:
+  '/domestic-payments':
     post:
       tags:
         - Domestic Payments
-      summary: Create a payment
-      description: Submit a payment using a previously setup consent
-      operationId: CreatePayment
-      consumes:
-        - application/json; charset=utf-8
-      produces:
-        - application/json; charset=utf-8
+      operationId: CreateDomesticPayment
+      summary: Create a new domestic-payment resource
+      description:  >-
+        The domestic-payment resource represents a single, domestic, electronic 
+        credit payment-order made in NZD that has been initiated by a Third Party 
+        on behalf of a Customer. A domestic-payment must be initiated using a 
+        payment-order consent which has been previously authorised by a Customer 
+        with an API Provider. This payment-order consent may either be a 
+        short-lived (domestic-payment-consent) or long-lived 
+        (enduring-payment-consent) payment order consent.
       parameters:
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-idempotency-key-Param'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
         - name: body
           in: body
-          description: Setup a single immediate payment
+          description: Domestic Payment Body
           required: true
           schema:
-            title: Payment Submission POST request
-            description: Allows Submission of a payment
+            title: Domestic Payment
             type: object
             properties:
               Data:
-                description: ''
-                title: Payment
-                type: object
-                properties:
-                  ConsentId:
-                    description: >-
-                      Unique identification as assigned by the API Provider to
-                      uniquely identify the payment setup resource.
-                    type: string
-                    minLength: 1
-                    maxLength: 128
-                  Initiation:
-                    $ref: '#/definitions/DomesticPaymentConsent'
-                required:
-                  - ConsentId
-                  - Initiation
-                additionalProperties: false
+                $ref: '#/definitions/DomesticPayment'
               Risk:
                 $ref: '#/definitions/Risk'
             required:
@@ -436,19 +389,21 @@ paths:
             additionalProperties: false
       responses:
         '201':
-          description: Payment submit resource successfully created
+          description: Created
           schema:
-            title: Payment Submit POST 201 Response
             type: object
             properties:
               Data:
                 $ref: '#/definitions/DomesticPaymentResponse'
+              Risk:
+                $ref: '#/definitions/Risk'
               Links:
                 $ref: '#/definitions/Links'
               Meta:
                 $ref: '#/definitions/Meta'
             required:
               - Data
+              - Risk
               - Links
               - Meta
             additionalProperties: false
@@ -483,28 +438,27 @@ paths:
     get:
       tags:
         - Domestic Payments
-      summary: Get a domestic payment
-      description: Get domestic payment
       operationId: GetDomesticPayment
-      produces:
-        - application/json; charset=utf-8
+      summary: Retrieve an domestic-payment resource
+      description: Retrieve an domestic-payment resource and check its status.
       parameters:
         - $ref: '#/parameters/DomesticPaymentIdParam'
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
-          description: Payment resource successfully retrieved
+          description: OK
           schema:
-            title: Payment Submit GET Response
             type: object
             properties:
               Data:
                 $ref: '#/definitions/DomesticPaymentResponse'
+              Risk:
+                $ref: '#/definitions/Risk'
               Links:
                 $ref: '#/definitions/Links'
               Meta:
@@ -538,47 +492,37 @@ paths:
         '503': 
           $ref: '#/responses/503ErrorResponse'
       security:
-        - CustomerOAuth2Security:
-            - payments
+        - ThirdPartyOAuth2Security:
+            - third_party_client_credential
   '/domestic-payments/{DomesticPaymentId}/debtor-account':
     get:
       tags:
         - Domestic Payments
-      summary: Get a domestic payment
-      description: Get domestic payment
       operationId: GetDomesticPaymentDebtorAccount
-      produces:
-        - application/json; charset=utf-8
+      summary: Get the debtor account associated with the domestic payment
+      description: Get the debtor account associated with the domestic payment
       parameters:
         - $ref: '#/parameters/DomesticPaymentIdParam'
+        - $ref: '#/parameters/AuthorizationParam'
         - $ref: '#/parameters/x-fapi-auth-date-Param'
         - $ref: '#/parameters/x-fapi-customer-ip-address-Param'
         - $ref: '#/parameters/x-fapi-interaction-id-Param'
         - $ref: '#/parameters/x-merchant-ip-address-Param'
         - $ref: '#/parameters/x-customer-user-agent-Param'
-        - $ref: '#/parameters/AuthorizationParam'
       responses:
         '200':
-          description: Payment resource successfully retrieved
+          description: OK
           schema:
-            title: Payment Submit GET Response
             type: object
             properties:
               Data:
-                type: object
-                properties:
-                  DebtorAccount:
-                    $ref: '#/definitions/DebtorAccount'
-                required:
-                  - DebtorAccount
-                additionalProperties: false
+                $ref: '#/definitions/DomesticPaymentDebtorAccountResponse'
               Links:
                 $ref: '#/definitions/Links'
               Meta:
                 $ref: '#/definitions/Meta'
             required:
               - Data
-              - Risk
               - Links
               - Meta
             additionalProperties: false
@@ -605,8 +549,8 @@ paths:
         '503': 
           $ref: '#/responses/503ErrorResponse'
       security:
-        - CustomerOAuth2Security:
-            - payments
+        - ThirdPartyOAuth2Security:
+            - third_party_client_credential
 parameters:
   x-idempotency-key-Param:
     name: x-idempotency-key
@@ -623,7 +567,7 @@ parameters:
     name: x-fapi-customer-ip-address
     type: string
     required: false
-    description:  >-
+    description: >-
       The Customer's IP address if the Customer is currently logged in 
       with the Third Party.
     pattern: ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
@@ -632,7 +576,8 @@ parameters:
     name: x-fapi-interaction-id
     type: string
     required: false
-    description: An RFC4122 UID used as a correlation id.
+    description: >- 
+      An RFC4122 UID used as a correlation id.
   x-fapi-auth-date-Param:
     in: header
     name: x-fapi-auth-date
@@ -640,10 +585,8 @@ parameters:
     required: false
     description: >-
       The time when the Customer last logged in with the Third Party. 
-
       All dates in the HTTP headers are represented as RFC 7231 Full Dates. An
       example is below: 
-
       Sun, 10 Sep 2017 19:43:31 UTC
     pattern: >-
       ^(Mon|Tue|Wed|Thu|Fri|Sat|Sun), \d{2}
@@ -655,7 +598,8 @@ parameters:
     type: string
     required: false
     description: >-
-      The IP address of the merchant when making payment requests through a Third Party.
+      The IP address of the merchant when making payment requests through 
+      a Third Party.
     pattern: ^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$
   x-customer-user-agent-Param:
     in: header
@@ -670,13 +614,14 @@ parameters:
     name: Authorization
     type: string
     required: true
-    description: 'An Authorisation Token as per https://tools.ietf.org/html/rfc6750'
+    description: >-
+      An Authorisation Token as per https://tools.ietf.org/html/rfc6750
   ConsentIdParam:
     name: ConsentId
     in: path
     description: >-
       Unique identification as assigned by the API Provider to uniquely identify
-      the payment setup resource.
+      the consent resource.
     required: true
     type: string
   DomesticPaymentIdParam:
@@ -684,10 +629,127 @@ parameters:
     in: path
     description: >-
       Unique identification as assigned by the API Provider to uniquely identify
-      the payment submission resource.
+      the the domestic payment resource.
     required: true
     type: string
 definitions:
+  Error:
+    type: object
+    properties:
+      ErrorCode:
+        description: >-
+          Low level textual error code.
+        type: string
+        enum:
+          - Field.Expected
+          - Field.Invalid
+          - Field.Missing
+          - Field.Unexpected
+          - Header.Invalid
+          - Header.Missing
+          - Reauthenticate
+          - Reauthorise
+          - Resource.Consent.CreditorAccount
+          - Resource.Consent.DebtorAccount
+          - Resource.Consent.Exceed.DataPermissions
+          - Resource.Consent.Exceed.Dates
+          - Resource.Consent.Exceed.Frequency
+          - Resource.Consent.Exceed.MaximumAmount
+          - Resource.Consent.Exceed.TotalAmount
+          - Resource.Consent.Exceed.TotalCount
+          - Resource.Consent.Exceed.TransactionDates
+          - Resource.Consent.InvalidStatus
+          - Resource.Consent.Mismatch
+          - Resource.Invalid
+          - UnexpectedError
+          - Unsupported.AccountIdentifier
+          - Unsupported.AccountSecondaryIdentifier
+          - Unsupported.Currency
+          - Unsupported.Scheme
+      Message:
+        description: >-
+          A free text description of the error that occurred. E.g., 
+          'A mandatory field isn't supplied'.
+        type: string
+        minLength: 1
+        maxLength: 500
+      Path:
+        description: >-
+          A recommended but optional reference to the JSON Path of the field 
+          with error, e.g., Data.Consent.InstructedAmount.Currency
+        type: string
+        minLength: 1
+        maxLength: 500
+      Url:
+        description: >-
+          URL to help remediate the problem, provide more information or to 
+          API Reference.
+        type: string
+    required:
+      - ErrorCode
+      - Message
+    additionalProperties: false
+    minProperties: 1
+  ErrorResponse:
+    description: >-
+      An array of detail error codes, and messages, and URLs to documentation to 
+      help remediation.	
+    type: object
+    properties:
+      Code:
+        description: >-
+          High level textual error code to help categorise the errors.
+        type: string
+        minLength: 1
+        maxLength: 40
+      Id:
+        description: >-
+          A unique reference for the error instance, for audit purposes, in 
+          case of unknown/unclassified errors.
+        type: string
+        minLength: 1
+        maxLength: 40
+      Message:
+        description: >-
+          Brief Error message. E.g., 'There is something wrong with the request 
+          parameters provided'
+        type: string
+        minLength: 1
+        maxLength: 500
+      Errors:
+        items:
+          $ref: '#/definitions/Error'
+        type: array
+        minItems: 1
+    required:
+      - Code
+      - Message
+      - Errors
+    additionalProperties: false
+  CreditorAgent:
+    description: Financial institution servicing an account for the creditor.
+    title: CreditorAgent
+    type: object
+    properties:
+      SchemeName:
+        description: >-
+          Name of the identification scheme, in a coded form as published in
+          an external list.
+        type: string
+        enum:
+          - BICFI
+      Identification:
+        description: >-
+          Unique and unambiguous identification of an organisation. ISO20022
+          defines this -
+          https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YWZBNtp-Ed-ak6NoX_4Aeg_-1295138508
+        type: string
+        minLength: 1
+        maxLength: 35
+    required:
+      - SchemeName
+      - Identification
+    additionalProperties: false
   CreditorAccount:
     description: >-
       Unambiguous identification of the account of the creditor to which a
@@ -699,7 +761,6 @@ definitions:
         description: >-
           Name of the identification scheme, in a coded form as published in
           an external list.
-        title: SchemeName
         type: string
         enum:
           - BECSElectronicCredit
@@ -708,7 +769,7 @@ definitions:
         description: >-
           Identification assigned by an institution to identify an account.
           This identification is known by the account owner. For the NZ
-          market, this will use the hyphen-delimited format: 2-4-7-2
+          market, this will use the hyphen-delimited format - 2-4-7-2
           where this is made up of bank-branch-account-suffix and each
           of the four components is a number, prepended with leading zeros
           to match the component length requirement.  
@@ -721,7 +782,7 @@ definitions:
           Name of the account, as assigned by the account servicing
           institution, in agreement with the account owner in order to
           provide an additional means of identification of the account.
-          Usage: The account name is different from the account owner name.
+          Usage - The account name is different from the account owner name.
           The account name is used in certain user communities to provide a
           means of identifying the account, in addition to the account
           owner's identity and the account number. API Providers may carry out name
@@ -761,7 +822,7 @@ definitions:
         description: >-
           Identification assigned by an institution to identify an account.
           This identification is known by the account owner. For the NZ
-          market, this will use the hyphen-delimited format: 2-4-7-2
+          market, this will use the hyphen-delimited format - 2-4-7-2
           where this is made up of bank-branch-account-suffix and each
           of the four components is a number, prepended with leading zeros
           to match the component length requirement.  
@@ -774,7 +835,7 @@ definitions:
           Name of the account, as assigned by the account servicing
           institution, in agreement with the account owner in order to
           provide an additional means of identification of the account.
-          Usage: The account name is different from the account owner name.
+          Usage - The account name is different from the account owner name.
           The account name is used in certain user communities to provide a
           means of identifying the account, in addition to the account
           owner's identity and the account number.
@@ -794,7 +855,7 @@ definitions:
     additionalProperties: false
   Meta:
     type: object
-    description: Meta Data Relevant to the payload
+    description: Metadata relevant to the payload
     properties:
       TotalPages:
         type: integer
@@ -824,8 +885,8 @@ definitions:
   Risk:
     type: object
     description: >-
-          The Risk section is sent by the initiating party to the API Provider. 
-          It is used to specify additional details for risk scoring.
+      The Risk section is sent by the initiating party to the API Provider. 
+      It is used to specify additional details for risk scoring.
     properties:
       GeoLocation:
         description: >-
@@ -834,18 +895,24 @@ definitions:
         type: object
         properties:
           Latitude:
-            description: Latitude measured in decimal degress
+            description: >-
+              Latitude measured in decimal degress
             type: string
             maxLength: 14
             pattern: ^-?\d{1,3}\.\d{1,8}$
           Longitude:
-            description: Longitude measured in decimal degress
+            description: >-
+              Longitude measured in decimal degress
             type: string
             maxLength: 14
             pattern: ^-?\d{1,3}\.\d{1,8}$
+        required:
+          - Latitude
+          - Longitude
+        additionalProperties: false
       PaymentContextCode:
-        description: Specifies the payment context
-        title: PaymentContextCode
+        description: >-
+          Specifies the payment context
         type: string
         enum:
           - BillPayment
@@ -875,6 +942,12 @@ definitions:
           text.
         type: object
         properties:
+          AddressType:
+            description: >-
+              Identifies the nature of the postal address.
+            type: string
+            enum:
+              - DeliveryTo
           AddressLine:
             description: >-
               Information that locates and identifies a specific
@@ -882,14 +955,14 @@ definitions:
               presented in free format text.
             type: array
             items:
-              description: maxLength 70 text
               type: string
               minLength: 1
               maxLength: 70
             minItems: 0
-            maxItems: 2
+            maxItems: 5
           StreetName:
-            description: Name of a street or thoroughfare
+            description: >-
+              Name of a street or thoroughfare.
             type: string
             minLength: 1
             maxLength: 70
@@ -919,14 +992,9 @@ definitions:
             description: >-
               Identifies a subdivision of a country, for instance
               state, region, county.
-            type: array
-            items:
-              description: maxLength 35 text
-              type: string
-              minLength: 1
-              maxLength: 35
-            minItems: 0
-            maxItems: 2
+            type: string
+            minLength: 1
+            maxLength: 35
           Country:
             description: >-
               Nation with its own government, occupying a particular
@@ -934,7 +1002,6 @@ definitions:
             type: string
             pattern: '^[A-Z]{2,2}$'
         required:
-          - TownName
           - Country
         additionalProperties: false
       EndUserAppName:
@@ -948,7 +1015,7 @@ definitions:
           Version of the end user facing application
         type: string
         minLength: 1
-        maxLength: 15
+        maxLength: 14
       MerchantName:
         description: >-
           Name of the merchant
@@ -965,151 +1032,88 @@ definitions:
   BECSRemittance:
     type: object
     description: >-
-      Remittance information for use with BECS Electronic Credit payment scheme.
-      The Particulars, Code and Reference fields are currently constrained by
-      providers.  The design choice has been made not to constrain through schema
-      restrictions, to allow for future changes that remove the constraint. 
-      Note that not all banks will accept all valid characters, in which case a
-      descriptive 400 Bad Request will be returned. Constraining to a-z, A-Z, - 
-      (dash) and 0-9 is advised. One example is abc-XYZ-123
+      Remittance information for use with BECSElectronicCredit payment scheme.
     properties:
       CreditorName:
+        description: >-
+          The Creditor's Name.
         type: string
         maxLength: 20
       CreditorReference:
         type: object
+        description: >-
+          Information supplied to enable the reconciling of the payment with 
+          the items that the transfer is intended to settle, such as 
+          commercial invoices in an accounts' receivable system.	
         properties:
           Particulars:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Code and Reference, unambiguously refer to the 
+              payment transaction.	
             maxLength: 12
           Code:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Particulars and Reference, unambiguously refer 
+              to the payment transaction.	
             maxLength: 12
           Reference:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Particulars and Code, unambiguously refer to the 
+              payment transaction.	
             maxLength: 12
       DebtorName:
         type: string
+        description: >-
+          The Debtor's Name.	
         maxLength: 20
       DebtorReference:
         type: object
+        description: >-
+          Information supplied to enable the reconciling of the payment with 
+          the items that the transfer is intended to settle, such as 
+          commercial invoices in an accounts' receivable system.	
         properties:
           Particulars:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Code and Reference, unambiguously refer to the 
+              payment transaction.	
             maxLength: 12
           Code:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Particulars and Reference, unambiguously refer 
+              to the payment transaction.	
             maxLength: 12
           Reference:
             type: string
+            description: >-
+              Reference information, as assigned by the debtor, which when 
+              combined with Particulars and Code, unambiguously refer to the 
+              payment transaction.	
             maxLength: 12
     required:
       - CreditorName
     additionalProperties: false
-  DomesticPaymentResponse:
-    type: object
-    description: Response that reflects the status of a payment
-    properties:
-      DomesticPaymentId:
-        description: >-
-          Unique identification as assigned by the API Provider to uniquely
-          identify the payment resource.
-        type: string
-        minLength: 1
-        maxLength: 40
-      ConsentId:
-        description: >-
-          Unique identification as assigned by the API Provider to uniquely
-          identify the payment consent resource.
-        type: string
-        minLength: 1
-        maxLength: 128
-      CreationDateTime:
-        description: >-
-          Date and time at which the resource was created.  All dates in the
-          JSON payloads are represented in ISO 8601 date-time format.  All
-          date-time fields in responses must include the timezone. An example is
-          below:
-            2017-04-05T10:43:07+00:00
-        type: string
-        format: date-time
-      Status:
-        description: Specifies the status of the payment resource.
-        title: PaymentStatusCode
-        type: string
-        enum:
-          - Pending
-          - AcceptedSettlementInProcess
-          - AcceptedSettlementCompleted
-          - Rejected
-      StatusUpdateDateTime:
-        description: >-
-          Date and time at which the resource was created.  All dates in the
-          JSON payloads are represented in ISO 8601 date-time format.  All
-          date-time fields in responses must include the timezone. An example is
-          below:
-            2017-04-05T10:43:07+00:00
-        type: string
-        format: date-time
-      Initiation:
-        $ref: '#/definitions/DomesticPaymentConsent'
-    required:
-      - DomesticPaymentId
-      - ConsentId
-      - Status
-      - CreationDateTime
-      - StatusUpdateDateTime
-      - Initiation
-    additionalProperties: false
-  DomesticPaymentConsentResponse:
-    type: object
-    description: Response that reflects the status of payment consent
-    properties:
-      ConsentId:
-        description: >-
-          Unique identification as assigned by the API Provider to uniquely
-          identify the payment setup resource.
-        type: string
-        minLength: 1
-        maxLength: 128
-      Status:
-        description: Specifies the status of the payment resource.
-        title: PaymentConsentStatusCode
-        type: string
-        enum:
-          - AwaitingAuthorisation
-          - Authorised
-          - Consumed
-          - Rejected
-      CreationDateTime:
-        description: >-
-          Date and time at which the resource was created.  All dates in the
-          JSON payloads are represented in ISO 8601 date-time format.  All
-          date-time fields in responses must include the timezone. An example is
-          below:
-            2017-04-05T10:43:07+00:00
-        type: string
-        format: date-time
-      Initiation:
-        $ref: '#/definitions/DomesticPaymentConsent'
-    required:
-      - ConsentId
-      - Status
-      - CreationDateTime
-      - Initiation
-    additionalProperties: false
-  DomesticPaymentConsent:
-    description: ''
+  DomesticConsent:
     type: object
     properties:
       InstructionIdentification:
         description: >-
           Unique identification as assigned by an instructing party for an
-          instructed party to unambiguously identify the instruction. Usage:
-          the instruction identification is a point to point reference that can
+          instructed party to unambiguously identify the instruction. Usage -
+          The instruction identification is a point to point reference that can
           be used between the instructing party and the instructed party to
           refer to the individual instruction. It can be included in several
-          messages related to the instruction. OBNZ: Updated to allow 36
+          messages related to the instruction. NZ - Updated to allow 36
           characters to allow for v4 UUID
         type: string
         minLength: 1
@@ -1118,10 +1122,10 @@ definitions:
         description: >-
           Unique identification assigned by the initiating party to
           unambiguously identify the transaction. This identification is passed
-          on, unchanged, throughout the entire end-to-end chain. Usage: The
+          on, unchanged, throughout the entire end-to-end chain. Usage - The
           end-to-end identification can be used for reconciliation or to link
           tasks relating to the transaction. It can be included in several
-          messages related to the transaction. OBNZ: Updated to 36 
+          messages related to the transaction. NZ - Updated to 36 
           characters to allow v4 UUID
         type: string
         minLength: 1
@@ -1133,7 +1137,7 @@ definitions:
         description: >-
           Amount of money to be moved between the debtor and creditor, before
           deduction of charges, expressed in the currency as ordered by the
-          initiating party. Usage: This amount has to be transported unchanged
+          initiating party. Usage - This amount has to be transported unchanged
           through the transaction chain.
         type: object
         properties:
@@ -1156,32 +1160,9 @@ definitions:
           - Currency
         additionalProperties: false
       DebtorAccount:
-        $ref: '#/definitions/DebtorAccount'     
+        $ref: '#/definitions/DebtorAccount'
       CreditorAgent:
-        description: Financial institution servicing an account for the creditor.
-        title: CreditorAgent
-        type: object
-        properties:
-          SchemeName:
-            description: >-
-              Name of the identification scheme, in a coded form as published in
-              an external list.
-            title: SchemeName
-            type: string
-            enum:
-              - BICFI
-          Identification:
-            description: >-
-              Unique and unambiguous identification of an organisation. ISO20022
-              defines this:
-              https://www.iso20022.org/standardsrepository/public/wqt/Description/mx/dico/datatypes/_YWZBNtp-Ed-ak6NoX_4Aeg_-1295138508
-            type: string
-            minLength: 1
-            maxLength: 35
-        required:
-          - SchemeName
-          - Identification
-        additionalProperties: false
+        $ref: '#/definitions/CreditorAgent'
       CreditorAccount:
         $ref: '#/definitions/CreditorAccount'
       RemittanceInformation:
@@ -1202,10 +1183,146 @@ definitions:
       - CreditorAccount
       - RemittanceInformation
     additionalProperties: false
-  EnduringPaymentConsent:
+  DomesticPaymentConsent:
+    type: object
+    description: Request data
+    properties:
+      Consent:
+        $ref: '#/definitions/DomesticConsent'
+    required:
+      - Consent
+    additionalProperties: false
+  DomesticPaymentConsentResponse:
+    type: object
+    description: Response data
+    properties:
+      ConsentId:
+        description: >-
+          Unique identification as assigned by the API Provider to uniquely
+          identify the consent resource.
+        type: string
+        minLength: 1
+        maxLength: 128
+      Status:
+        description: Specifies the status of the consent resource.
+        title: ConsentStatusCode
+        type: string
+        enum:
+          - AwaitingAuthorisation
+          - Authorised
+          - Consumed
+          - Rejected
+      CreationDateTime:
+        description: >-
+          Date and time at which the resource was created.  All dates in the
+          JSON payloads are represented in ISO 8601 date-time format.  All
+          date-time fields in responses must include the timezone. An example is
+          below:
+            2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+      StatusUpdateDateTime:
+        description: >-
+          Date and time at which the resource was updated.  All dates in the
+          JSON payloads are represented in ISO 8601 date-time format.  All
+          date-time fields in responses must include the timezone. An example is
+          below:
+            2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+      Consent:
+        $ref: '#/definitions/DomesticConsent'
+    required:
+      - ConsentId
+      - Status
+      - CreationDateTime
+      - StatusUpdateDateTime
+      - Consent
+    additionalProperties: false
+  DomesticPayment:
+    type: object
+    description: Request data
+    properties:
+      ConsentId:
+        description: >-
+          Unique identification as assigned by the API Provider to uniquely
+          identify the consent resource.
+        type: string
+        minLength: 1
+        maxLength: 128
+      Initiation:
+        $ref: '#/definitions/DomesticConsent'
+    required:
+      - ConsentId
+      - Initiation
+    additionalProperties: false
+  DomesticPaymentResponse:
+    type: object
+    description: Response data
+    properties:
+      DomesticPaymentId:
+        description: >-
+          Unique identification as assigned by the API Provider to uniquely
+          identify the payment resource.
+        type: string
+        minLength: 1
+        maxLength: 40
+      ConsentId:
+        description: >-
+          Unique identification as assigned by the API Provider to uniquely
+          identify the consent resource.
+        type: string
+        minLength: 1
+        maxLength: 128
+      Status:
+        description: Specifies the status of the payment resource.
+        title: PaymentStatusCode
+        type: string
+        enum:
+          - Pending
+          - AcceptedSettlementInProcess
+          - AcceptedSettlementCompleted
+          - Rejected
+      CreationDateTime:
+        description: >-
+          Date and time at which the resource was created.  All dates in the
+          JSON payloads are represented in ISO 8601 date-time format.  All
+          date-time fields in responses must include the timezone. An example is
+          below:
+            2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+      StatusUpdateDateTime:
+        description: >-
+          Date and time at which the resource was updated.  All dates in the
+          JSON payloads are represented in ISO 8601 date-time format.  All
+          date-time fields in responses must include the timezone. An example is
+          below:
+            2017-04-05T10:43:07+00:00
+        type: string
+        format: date-time
+      Initiation:
+        $ref: '#/definitions/DomesticConsent'
+    required:
+      - DomesticPaymentId
+      - ConsentId
+      - Status
+      - CreationDateTime
+      - StatusUpdateDateTime
+      - Initiation
+    additionalProperties: false
+  DomesticPaymentDebtorAccountResponse:
+    type: object
+    description: Response data
+    properties:
+      DebtorAccount:
+        $ref: '#/definitions/DebtorAccount'
+    required:
+      - DebtorAccount
+    additionalProperties: false
+  EnduringConsent:
     description: >-
-      The Consent payload is sent by the Third Party to the API Provider. 
-      
+      The Consent payload is sent by the Third Party to the API Provider.
       It is used to request a long lived payment consent to move funds from a
       debtor account to a creditor.
     type: object
@@ -1344,20 +1461,29 @@ definitions:
       - Frequency
       - MaximumAmount
     additionalProperties: false
-  EnduringPaymentConsentResponse:
-    description: ''
+  EnduringPaymentConsent:
     type: object
+    description: Request data
+    properties:
+      Consent:
+        $ref: '#/definitions/EnduringConsent'
+    required:
+      - Consent
+    additionalProperties: false
+  EnduringPaymentConsentResponse:
+    type: object
+    description: Response data
     properties:
       ConsentId:
         description: >-
           Unique identification as assigned by the API Provider to uniquely
-          identify the payment setup resource.
+          identify the consent resource.
         type: string
         minLength: 1
         maxLength: 128
       Status:
-        description: Specifies the status of the payment resource.
-        title: PaymentStatusCode
+        description: Specifies the status of the consent resource.
+        title: ConsentStatusCode
         type: string
         enum:
           - AwaitingAuthorisation
@@ -1375,7 +1501,7 @@ definitions:
         format: date-time
       StatusUpdateDateTime:
         description: >-
-          Date and time at which the resource was created.  All dates in the
+          Date and time at which the resource was updated.  All dates in the
           JSON payloads are represented in ISO 8601 date-time format.  All
           date-time fields in responses must include the timezone. An example is
           below:
@@ -1383,7 +1509,14 @@ definitions:
         type: string
         format: date-time
       Consent:
-        $ref: '#/definitions/EnduringPaymentConsent'
+        $ref: '#/definitions/EnduringConsent'
+    required:
+      - ConsentId
+      - Status
+      - CreationDateTime
+      - StatusUpdateDateTime
+      - Consent
+    additionalProperties: false
 securityDefinitions:
   CustomerOAuth2Security:
     type: oauth2
@@ -1393,8 +1526,8 @@ securityDefinitions:
     scopes:
       payments: Generic payment scope
     description: >-
-      OAuth flow, it is required when the Customer needs to perform SCA with the
-      API Provider when a Third Party wants to access an API Provider resource owned by 
+      OAuth flow, it is required when the Customer needs to perform SCA with the API 
+      Provider when a Third Party wants to access an API Provider resource owned by 
       the Customer
   ThirdPartyOAuth2Security:
     type: oauth2
@@ -1402,36 +1535,84 @@ securityDefinitions:
     tokenUrl: 'https://authserver.example/token'
     scopes:
       third_party_client_credential: Third Party client credential scope
-    description: Third Party client credential authorisation flow with the API Provider
+    description:  >-
+      Third Party client credential authorisation flow with the API Provider
 tags:
-  - name: Domestic Payments
-    description: Payments endpoints
   - name: Enduring Payment Consents
-    description: Payment consents that are long-lived
+    description: Long lived payment-order consent
   - name: Domestic Payment Consents
-    description: Single-use consents for Payments
+    description: Short lived payment-order consent
+  - name: Domestic Payments
+    description: Single, domestic, electronic credit payment-order
 responses:
   400ErrorResponse:
     description: Bad Request
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
   401ErrorResponse:
     description: Unauthorized
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   403ErrorResponse:
     description: Forbidden
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
   405ErrorResponse:
     description: Method Not Allowed
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   406ErrorResponse:
     description: Not Acceptable
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   415ErrorResponse:
     description: Unsupported Media Type
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   429ErrorResponse:
     description: Too Many Requests
     headers:
       Retry-After:
         description: Number in seconds to wait
         type: integer
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   500ErrorResponse:
     description: Internal Server Error
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
   501ErrorResponse:
     description: Not Implemented
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
   503ErrorResponse:
     description: Service Unavailable
+    headers:
+      x-fapi-interaction-id:
+        type: string
+        description: An RFC4122 UID used as a correlation id.
+    schema:
+      $ref: '#/definitions/ErrorResponse'
