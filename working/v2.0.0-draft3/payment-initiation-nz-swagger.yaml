@@ -701,14 +701,14 @@ definitions:
           High level textual error code to help categorise the errors.
         type: string
         minLength: 1
-        maxLength: 40
+        maxLength: 128
       Id:
         description: >-
           A unique reference for the error instance, for audit purposes, in 
           case of unknown/unclassified errors.
         type: string
         minLength: 1
-        maxLength: 40
+        maxLength: 128
       Message:
         description: >-
           Brief Error message. E.g., 'There is something wrong with the request 
@@ -1452,7 +1452,7 @@ definitions:
         additionalProperties: false
       DebtorAccount:
         $ref: '#/definitions/DebtorAccount'
-      CreditorAccounts:
+      CreditorAccount:
         type: array
         items:
           $ref: '#/definitions/CreditorAccount'
