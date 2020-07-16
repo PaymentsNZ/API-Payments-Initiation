@@ -629,7 +629,7 @@ parameters:
     in: path
     description: >-
       Unique identification as assigned by the API Provider to uniquely identify
-      the the domestic payment.
+      the domestic payment.
     required: true
     type: string
 definitions:
