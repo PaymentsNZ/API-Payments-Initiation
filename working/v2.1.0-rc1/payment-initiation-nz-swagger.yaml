@@ -647,6 +647,7 @@ definitions:
           - Field.Unexpected
           - Header.Invalid
           - Header.Missing
+          - QueryParam.Invalid
           - Reauthenticate
           - Reauthorise
           - Resource.Consent.CreditorAccount
