@@ -1369,6 +1369,7 @@ components:
       description: The multiple authorisation flow response from the API Provider.
       required:
         - Status
+      additionalProperties: false
       properties:
         Status:
           description: Specifies the status of the authorisation flow in code form.
