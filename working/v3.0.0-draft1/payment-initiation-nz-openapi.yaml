@@ -1135,6 +1135,7 @@ components:
                 when  combined with Particulars and Code, unambiguously refer to
                 the  payment transaction.
               maxLength: 12
+          additionalProperties: false
         DebtorName:
           type: string
           description: The Debtor's Name.
@@ -1163,6 +1164,7 @@ components:
                 when  combined with Particulars and Code, unambiguously refer to
                 the  payment transaction.
               maxLength: 12
+          additionalProperties: false
       required:
         - CreditorName
       additionalProperties: false
