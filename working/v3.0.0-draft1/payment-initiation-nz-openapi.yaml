@@ -401,9 +401,7 @@ paths:
                 type: object
                 properties:
                   Data:
-                    $ref: "#/components/schemas/DomesticPaymentResponse" 
-                  MultiAuthorisation:
-                    $ref: "#/components/schemas/MultiAuthorisationResponse"
+                    $ref: "#/components/schemas/DomesticPaymentResponse"
                   Risk:
                     $ref: "#/components/schemas/Risk"
                   Links:
@@ -1248,6 +1246,8 @@ components:
       properties:
         Consent:
           $ref: "#/components/schemas/DomesticConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - Consent
       additionalProperties: false
@@ -1290,6 +1290,8 @@ components:
           format: date-time
         Consent:
           $ref: "#/components/schemas/DomesticConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - ConsentId
         - Status
@@ -1358,6 +1360,8 @@ components:
           format: date-time
         Initiation:
           $ref: "#/components/schemas/DomesticConsent"
+        MultiAuthorisation:
+          $ref: "#/components/schemas/MultiAuthorisationResponse"
       required:
         - DomesticPaymentId
         - ConsentId
@@ -1366,6 +1370,23 @@ components:
         - StatusUpdateDateTime
         - Initiation
       additionalProperties: false
+    Authorisation:
+      type: "object"
+      additionalProperties: false
+      required:
+        - "AuthorisationType"
+      description: "The authorisation type request from the TPP."
+      properties:
+        AuthorisationType:
+          description: "Type of authorisation flow requested."
+          type: "string"
+          enum:
+            - "Any"
+            - "Single"
+        CompletionDateTime:
+          description: "Date and time at which the requested authorisation flow must be completed. All dates in the JSON payloads are represented in ISO 8601 date-time format. \nAll date-time fields in responses must include the timezone. An example is below:\n2017-04-05T10:43:07+00:00"
+          type: "string"
+          format: "date-time"
     MultiAuthorisationResponse:
       type: object
       description: The multiple authorisation flow response from the API Provider.
@@ -1540,6 +1561,8 @@ components:
       properties:
         Consent:
           $ref: "#/components/schemas/EnduringConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - Consent
       additionalProperties: false
@@ -1582,6 +1605,8 @@ components:
           format: date-time
         Consent:
           $ref: "#/components/schemas/EnduringConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - ConsentId
         - Status
