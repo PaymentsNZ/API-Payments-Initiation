@@ -1133,6 +1133,7 @@ components:
                 when  combined with Particulars and Code, unambiguously refer to
                 the  payment transaction.
               maxLength: 12
+          additionalProperties: false
         DebtorName:
           type: string
           description: The Debtor's Name.
@@ -1161,6 +1162,7 @@ components:
                 when  combined with Particulars and Code, unambiguously refer to
                 the  payment transaction.
               maxLength: 12
+          additionalProperties: false
       required:
         - CreditorName
       additionalProperties: false
@@ -1244,6 +1246,8 @@ components:
       properties:
         Consent:
           $ref: "#/components/schemas/DomesticConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - Consent
       additionalProperties: false
@@ -1286,6 +1290,8 @@ components:
           format: date-time
         Consent:
           $ref: "#/components/schemas/DomesticConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - ConsentId
         - Status
@@ -1354,6 +1360,8 @@ components:
           format: date-time
         Initiation:
           $ref: "#/components/schemas/DomesticConsent"
+        MultiAuthorisation:
+          $ref: "#/components/schemas/MultiAuthorisationResponse"
       required:
         - DomesticPaymentId
         - ConsentId
@@ -1362,6 +1370,73 @@ components:
         - StatusUpdateDateTime
         - Initiation
       additionalProperties: false
+    Authorisation:
+      type: object
+      additionalProperties: false
+      required:
+        - AuthorisationType
+      description: The authorisation type request from the Third Party.
+      properties:
+        AuthorisationType:
+          description: Type of authorisation flow requested.
+          type: string
+          enum:
+            - Any
+            - Single
+        CompletionDateTime:
+          description: >-
+            Date and time at which the requested authorisation flow must be 
+            completed. All dates in the JSON payloads are represented in ISO 8601
+            date-time format.
+            
+            All date-time fields in responses must include the timezone. 
+            
+            An example is: 2017-04-05T10:43:07+00:00
+          type: string
+          format: date-time
+    MultiAuthorisationResponse:
+      type: object
+      description: The multiple authorisation flow response from the API Provider.
+      required:
+        - Status
+      additionalProperties: false
+      properties:
+        Status:
+          description: Specifies the status of the authorisation flow in code form.
+          type: string
+          enum:
+            - Authorised
+            - AwaitingFurtherAuthorisation
+            - Rejected
+        NumberRequired:
+          description: >-
+            Number of authorisations required for payment order (total required at the
+            start of the multi authorisation journey).
+          type: integer
+        NumberReceived:
+          description: Number of authorisations received.
+          type: integer
+        LastUpdateDateTime:
+          description: >- 
+            Last date and time at the authorisation flow was updated.
+            All dates in the JSON payloads are represented in ISO 8601 date-time format.
+            
+            All date-time fields in responses must include the timezone. 
+            
+            An example is below: 2017-04-05T10:43:07+00:00
+          type: string
+          format: date-time
+        ExpirationDateTime:
+          description: >-
+            Date and time at which the requested authorisation flow must be
+            completed.  All dates in the JSON payloads are represented in ISO 8601 
+            date-time format.
+            
+            All date-time fields in responses must include the timezone. 
+            
+            An example is: 2017-04-05T10:43:07+00:00
+          type: string
+          format: date-time
     DomesticPaymentDebtorAccountResponse:
       type: object
       description: Response data
@@ -1508,6 +1583,8 @@ components:
       properties:
         Consent:
           $ref: "#/components/schemas/EnduringConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - Consent
       additionalProperties: false
@@ -1550,6 +1627,8 @@ components:
           format: date-time
         Consent:
           $ref: "#/components/schemas/EnduringConsent"
+        Authorisation:
+          $ref: "#/components/schemas/Authorisation"
       required:
         - ConsentId
         - Status
