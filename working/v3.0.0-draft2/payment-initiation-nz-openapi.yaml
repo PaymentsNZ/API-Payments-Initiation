@@ -1325,7 +1325,7 @@ components:
             identify the domestic payment.
           type: string
           minLength: 1
-          maxLength: 40
+          maxLength: 128
         ConsentId:
           description: Unique identification as assigned by the API Provider to uniquely
             identify the consent.
