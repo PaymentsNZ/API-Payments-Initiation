@@ -1,8 +1,8 @@
 # Payment Initiation
 
-## V3.0.0-rc1
+## V3.0.0-rc2
 
-This is v3.0.0-rc1 NZ Open Banking Payment Initiation API technical specification.
+This is v3.0.0-rc2 NZ Open Banking Payment Initiation API technical specification.
 
 The `AuthorizationParam` definition and references have been removed.  Header parameters named `Authorization` are [ignored in OpenAPI 3](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.3.md#user-content-parametername); `securitySchemes` and `security` should be used instead.
 
