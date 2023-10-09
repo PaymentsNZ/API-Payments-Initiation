@@ -560,12 +560,12 @@ paths:
         - ThirdPartyOAuth2Security:
             - payments
 tags:
-  - name: Enduring Payment Consents
-    description: Long lived payment-order consent
   - name: Domestic Payment Consents
     description: Short lived payment-order consent
   - name: Domestic Payments
     description: Single, domestic, electronic credit payment-order
+  - name: Enduring Payment Consents
+    description: Long lived payment-order consent
 servers:
   - url: https://api.provider.co.nz/open-banking-nz/v3.0
 components:
@@ -992,12 +992,12 @@ components:
           type: object
           properties:
             Latitude:
-              description: Latitude measured in decimal degress
+              description: Latitude measured in decimal degrees
               type: string
               maxLength: 14
               pattern: ^-?\d{1,3}\.\d{1,8}$
             Longitude:
-              description: Longitude measured in decimal degress
+              description: Longitude measured in decimal degrees
               type: string
               maxLength: 14
               pattern: ^-?\d{1,3}\.\d{1,8}$
@@ -1091,6 +1091,16 @@ components:
           type: string
           minLength: 1
           maxLength: 14
+        EndUserCompanyName:
+          description: Name of the end user facing organisation
+          type: string
+          minLength: 1
+          maxLength: 70
+        EndUserCompanyNZBN:
+          description: NZ business number for the end user facing organisation
+          type: string
+          minLength: 1
+          maxLength: 70
         MerchantName:
           description: Name of the merchant
           type: string
