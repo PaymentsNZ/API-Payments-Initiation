@@ -2,6 +2,11 @@
 
 ---
 
+## v3.0.0 - 13/11/2023
+
+- Major new release
+- Updated DomesticPaymentId length from 40 characters to 128
+
 ## v2.1.2, v2.2.2, v2.3.2 - 25/10/2023
 
 - Patch release to update all HTTP error responses to include standard error body.  This aligns with the documented requirement and Technical Working Group decision 029.
