@@ -16,10 +16,10 @@ The APIs covered in the specifications are:
 
 The files contained in this project cover:
 
-- Swagger 2.0 YAML formatted API specifications of
+- Swagger 2.0 / OpenAPI 3.0 YAML formatted API specifications of
   - Payment API
 - [Changelogs](payment-initiation-nz-changelog.md) of NZ APIs recording human-friendly notes of API changes
-- [Response code defintions and descriptions](payment-initiation-nz-response-codes.md)
+- [Response code definitions and descriptions](payment-initiation-nz-response-codes.md)
 - Other files as required
 
 ## Upstream API Reference
