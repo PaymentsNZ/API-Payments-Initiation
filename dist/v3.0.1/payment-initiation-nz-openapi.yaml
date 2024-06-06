@@ -87,7 +87,7 @@ paths:
         "406":
           $ref: "#/components/responses/406ErrorResponse"
         "415":
-          $ref: "#/components/responses/406ErrorResponse"
+          $ref: "#/components/responses/415ErrorResponse"
         "429":
           $ref: "#/components/responses/429ErrorResponse"
         "500":
