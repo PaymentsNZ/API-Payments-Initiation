@@ -1240,24 +1240,8 @@ components:
             deduction of charges, expressed in the currency as ordered by the
             initiating party. Usage - This amount has to be transported
             unchanged through the transaction chain.
-          type: object
-          properties:
-            Amount:
-              description: A number of monetary units specified in an active currency where
-                the unit of currency is explicit and compliant with ISO 4217.
-              type: string
-              pattern: ^\d{1,13}\.\d{1,5}$
-            Currency:
-              description: A code allocated to a currency by a Maintenance Agency under an
-                international identification scheme, as described in the latest
-                edition of the international standard ISO 4217 - Codes for the
-                representation of currencies and funds.
-              type: string
-              pattern: ^[A-Z]{3,3}$
-          required:
-            - Amount
-            - Currency
-          additionalProperties: false
+          allOf:
+            - $ref: '#/components/schemas/ActiveOrHistoricCurrencyAndAmount'
         DebtorAccount:
           $ref: "#/components/schemas/DebtorAccount"
         CreditorAgent:
@@ -1451,46 +1435,14 @@ components:
             as a cumulative total for the duration of the enduring
             payment  consent, before deduction of charges, expressed in the
             currency as ordered by the initiating party.
-          type: object
-          properties:
-            Amount:
-              description: A number of monetary units specified in an active currency where
-                the unit of currency is explicit and compliant with ISO 4217.
-              type: string
-              pattern: ^\d{1,13}\.\d{1,5}$
-            Currency:
-              description: A code allocated to a currency by a Maintenance Agency under an
-                international identification scheme, as described in the latest
-                edition of the international standard ISO 4217 - Codes for the
-                representation of currencies and funds.
-              type: string
-              pattern: ^[A-Z]{3,3}$
-          required:
-            - Amount
-            - Currency
-          additionalProperties: false
+          allOf:
+            - $ref: '#/components/schemas/ActiveOrHistoricCurrencyAndAmount'
         MaximumAmount:
           description: Maximum amount of money to be moved between the debtor and creditor
             for an individual payment, before deduction of charges, expressed in
             the currency as ordered by the initiating party.
-          type: object
-          properties:
-            Amount:
-              description: A number of monetary units specified in an active currency where
-                the unit of currency is explicit and compliant with ISO 4217.
-              type: string
-              pattern: ^\d{1,13}\.\d{1,5}$
-            Currency:
-              description: A code allocated to a currency by a Maintenance Agency under an
-                international identification scheme, as described in the latest
-                edition of the international standard ISO 4217 - Codes for the
-                representation of currencies and funds.
-              type: string
-              pattern: ^[A-Z]{3,3}$
-          required:
-            - Amount
-            - Currency
-          additionalProperties: false
+          allOf:
+            - $ref: '#/components/schemas/ActiveOrHistoricCurrencyAndAmount'
         Frequency:
           type: object
           properties:
@@ -1509,25 +1461,8 @@ components:
               description: Maximum amount of money to be moved between the debtor and creditor
                 during the period specified, before deduction of charges,
                 expressed in the currency as ordered by the initiating party.
-              type: object
-              properties:
-                Amount:
-                  description: A number of monetary units specified in an active currency where
-                    the unit of currency is explicit and compliant with ISO
-                    4217.
-                  type: string
-                  pattern: ^\d{1,13}\.\d{1,5}$
-                Currency:
-                  description: A code allocated to a currency by a Maintenance Agency under an
-                    international identification scheme, as described in the
-                    latest edition of the international standard ISO 4217 -
-                    Codes for the representation of currencies and funds.
-                  type: string
-                  pattern: ^[A-Z]{3,3}$
-              required:
-                - Amount
-                - Currency
-              additionalProperties: false
+              allOf:
+                - $ref: '#/components/schemas/ActiveOrHistoricCurrencyAndAmount'
           required:
             - Period
             - TotalAmount
@@ -1599,4 +1534,28 @@ components:
         - CreationDateTime
         - StatusUpdateDateTime
         - Consent
+      additionalProperties: false
+    ActiveCurrencyAndAmount_SimpleType:
+      description: A number of monetary units specified in an active currency
+        where the unit of currency is explicit and compliant with ISO 4217.
+      type: string
+      pattern: ^\d{1,13}(\.\d{1,5})?$
+    ActiveOrHistoricCurrency:
+      description: A code allocated to a currency by a Maintenance Agency under an
+        international identification scheme, as described in the latest
+        edition of the international standard ISO 4217 'Codes for the
+        representation of currencies and funds'
+      type: string
+      pattern: ^[A-Z]{3,3}$
+    ActiveOrHistoricCurrencyAndAmount:
+      description: Active Or Historic Currency Code and Amount
+      type: object
+      properties:
+        Amount:
+          $ref: '#/components/schemas/ActiveCurrencyAndAmount_SimpleType'
+        Currency:
+          $ref: '#/components/schemas/ActiveOrHistoricCurrency'
+      required:
+        - Amount
+        - Currency
       additionalProperties: false
